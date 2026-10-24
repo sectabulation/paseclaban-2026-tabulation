@@ -224,6 +224,14 @@ details.subd summary{cursor:pointer;color:var(--gold2);font-weight:700;font-size
   animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 50ms)}
 .hero h2{background-image:linear-gradient(100deg,#9c7a1e 0%,var(--gold) 20%,var(--gold2) 30%,var(--gold) 40%,#9c7a1e 60%,var(--gold) 80%,#9c7a1e 100%);
   background-size:200% 100%;animation:shimmer 7s linear infinite}
+/* SEC in chrome silver inside the gold title; soft chrome sheen gliding across on the hero title */
+.sec-silver{background:linear-gradient(180deg,#ffffff 0%,#dfe3e8 30%,#8a9099 48%,#5f656d 52%,#cfd4da 70%,#9aa0a8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.hero h2 .sec-silver{display:inline-block;
+  background-image:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.5) 45%,rgba(255,255,255,.8) 50%,rgba(255,255,255,.5) 55%,transparent 70%),
+    linear-gradient(180deg,#ffffff 0%,#dfe3e8 30%,#8a9099 48%,#5f656d 52%,#cfd4da 70%,#9aa0a8 100%);
+  background-size:300% 100%,100% 100%;background-repeat:no-repeat;animation:secSheen 5s ease-in-out infinite}
+@keyframes secSheen{0%{background-position:130% 0,0 0}60%,100%{background-position:-30% 0,0 0}}
+@media (prefers-reduced-motion:reduce){.hero h2 .sec-silver{animation:none}}
 .pod.p1{animation:glow 4s ease-in-out infinite}
 #view.enter .pod.p1{animation:rise .5s cubic-bezier(.2,.7,.2,1) both,glow 4s ease-in-out .6s infinite;animation-delay:calc(var(--i,0) * 50ms),.6s}
 .bar i{transition:width 1s cubic-bezier(.2,.7,.2,1)}
@@ -270,7 +278,7 @@ nav.tabs button{transition:color .2s,border-color .2s}
   <div class="top-in">
     <button class="logo-btn" id="secLogo" title="Surigao Education Center" aria-label="SEC logo — admin sign-in"><img src="assets/sec_logo.svg" alt="SEC logo"></button>
     <div class="brand">
-      <h1 class="gold-text">PaSEClaban 2026</h1>
+      <h1 class="gold-text">PA<span class="sec-silver">SEC</span>LABAN 2026</h1>
       <small id="syncInfo">Loading…</small>
     </div>
     <span class="badge demo hidden" id="demoBadge">DEMO</span>
@@ -573,7 +581,7 @@ function vOverall() {
   return `
   <div class="hero">
     <div class="school">SURIGAO EDUCATION CENTER</div>
-    <h2 class="gold-text">PaSEClaban 2026</h2>
+    <h2 class="gold-text">PA<span class="sec-silver">SEC</span>LABAN 2026</h2>
     <div class="theme">“Unleash the Surge: Driven by Grit, Break the Limits, One Unstoppable Spirit”</div>
     <div class="date">OCTOBER 27–30, 2026</div>
   </div>
