@@ -592,8 +592,8 @@ function vOverall() {
   <div class="sec-title"><h2 class="silver-text">OVERALL STANDINGS</h2></div>
   <div class="row" style="margin-bottom:12px">${deptSeg()}<span class="spacer"></span><span class="muted" style="font-size:14px">${fin} of ${evs.length} events final</span></div>
   <div class="panel" style="padding:6px 10px">
-    <table class="table"><thead><tr><th>#</th><th>TEAM</th>${sp ? '<th style="text-align:right">POINTS</th>' : ''}</tr></thead><tbody>
-    ${rows.map(r => `<tr><td class="t-rank">${r.rank}</td>
+    <table class="table"><thead><tr><th>TEAM</th>${sp ? '<th style="text-align:right">POINTS</th>' : ''}</tr></thead><tbody>
+    ${rows.map(r => `<tr>
       <td><div class="t-team"><img src="${r.team.logo}" alt=""><div style="flex:1;min-width:0">${esc(r.team.name)}${r.team.unit ? `<span class="un">${esc(r.team.unit)}</span>` : ''}<div class="bar"><i data-w="${r.pts / max * 100}" style="width:${r.pts / max * 100}%"></i></div></div></div></td>
       ${sp ? `<td class="t-pts"><span class="gold-text" data-count="${r.pts}">${f2(r.pts)}</span></td>` : ''}</tr>`).join('')}
     </tbody></table>
