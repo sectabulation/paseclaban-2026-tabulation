@@ -572,12 +572,16 @@ function animateView() {
   requestAnimationFrame(step);
 }
 
+// Overall points stay hidden from viewers until the last day (Oct 30, 2026, PH time); admins always see them
+const REVEAL_POINTS_AT = new Date('2026-10-30T00:00:00+08:00');
+const showPoints = () => S.admin || Date.now() >= REVEAL_POINTS_AT.getTime();
+
 function vOverall() {
   const rows = overall(S.dept);
+  const sp = showPoints();
   const max = Math.max(1, ...rows.map(r => r.pts));
   const evs = S.state.events.filter(e => e.dept === S.dept);
   const fin = evs.filter(e => e.status === 'final').length;
-  const top = rows.slice(0, 3);
   return `
   <div class="hero">
     <div class="school">SURIGAO EDUCATION CENTER</div>
@@ -587,21 +591,14 @@ function vOverall() {
   </div>
   <div class="sec-title"><h2 class="silver-text">OVERALL STANDINGS</h2></div>
   <div class="row" style="margin-bottom:12px">${deptSeg()}<span class="spacer"></span><span class="muted" style="font-size:14px">${fin} of ${evs.length} events final</span></div>
-  ${rows.some(r => r.pts) ? '' : '<!--'}<div class="podium ${top.length === 2 ? 'two' : ''}">${top.map((r, i) => `
-    <div class="pod p${i + 1}"><div class="rk">${r.rank}</div><img src="${r.team.logo}" alt="">
-      <div class="nm">${esc(r.team.name)}</div>${r.team.unit ? `<div class="un">${esc(r.team.unit)}</div>` : ''}
-      <div class="pt ${i === 0 ? 'gold-text' : 'silver-text'}" data-count="${r.pts}">${f2(r.pts)}</div></div>`).join('')}</div>${rows.some(r => r.pts) ? '' : '-->'}
   <div class="panel" style="padding:6px 10px">
-    <table class="table"><thead><tr><th>#</th><th>TEAM</th>
-      <th class="t-num t-hide"><span class="medal m1"></span>1st</th><th class="t-num t-hide"><span class="medal m2"></span>2nd</th><th class="t-num t-hide"><span class="medal m3"></span>3rd</th>
-      <th style="text-align:right">POINTS</th></tr></thead><tbody>
+    <table class="table"><thead><tr><th>#</th><th>TEAM</th>${sp ? '<th style="text-align:right">POINTS</th>' : ''}</tr></thead><tbody>
     ${rows.map(r => `<tr><td class="t-rank">${r.rank}</td>
       <td><div class="t-team"><img src="${r.team.logo}" alt=""><div style="flex:1;min-width:0">${esc(r.team.name)}${r.team.unit ? `<span class="un">${esc(r.team.unit)}</span>` : ''}<div class="bar"><i data-w="${r.pts / max * 100}" style="width:${r.pts / max * 100}%"></i></div></div></div></td>
-      <td class="t-num t-hide">${r.m[0]}</td><td class="t-num t-hide">${r.m[1]}</td><td class="t-num t-hide">${r.m[2]}</td>
-      <td class="t-pts"><span class="gold-text" data-count="${r.pts}">${f2(r.pts)}</span></td></tr>`).join('')}
+      ${sp ? `<td class="t-pts"><span class="gold-text" data-count="${r.pts}">${f2(r.pts)}</span></td>` : ''}</tr>`).join('')}
     </tbody></table>
   </div>
-  <p class="note">Overall points = sum of points from all events marked <b>Final</b>. Each department is tabulated separately. 1st/2nd/3rd = event placements (display only).</p>`;
+  <p class="note">Overall points = sum of points from all events marked <b>Final</b>. Each department is tabulated separately.${sp ? '' : ' Bars show each team\'s standing relative to the leader; point totals are revealed on the last day.'}</p>`;
 }
 
 function placeRow(e, x) {
