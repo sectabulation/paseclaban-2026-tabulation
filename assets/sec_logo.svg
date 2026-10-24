@@ -1,11 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
 <defs>
-<radialGradient id="sp" cx="38%" cy="32%" r="70%"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#c9ccd1"/><stop offset="1" stop-color="#55595f"/></radialGradient>
-<linearGradient id="pl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9ebee"/><stop offset="1" stop-color="#8d9298"/></linearGradient>
-<linearGradient id="pr" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9dce0"/><stop offset="1" stop-color="#7c8187"/></linearGradient>
-<linearGradient id="fr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f2f3f5"/><stop offset="1" stop-color="#8a8f95"/></linearGradient>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3c2"/><stop offset=".18" stop-color="#e9c55c"/><stop offset=".4" stop-color="#a77f1f"/><stop offset=".55" stop-color="#f8e293"/><stop offset=".72" stop-color="#c99c30"/><stop offset="1" stop-color="#7a5913"/></linearGradient>
+<radialGradient id="sp" cx="38%" cy="32%" r="70%"><stop offset="0" stop-color="#ff6b72"/><stop offset=".4" stop-color="#c4121f"/><stop offset="1" stop-color="#5a060c"/></radialGradient>
+<linearGradient id="pl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3c40"/><stop offset="1" stop-color="#0b0b0c"/></linearGradient>
+<linearGradient id="pr" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e3034"/><stop offset="1" stop-color="#050505"/></linearGradient>
+<linearGradient id="fr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9aa0a7"/><stop offset=".5" stop-color="#5d6269"/><stop offset="1" stop-color="#2f3237"/></linearGradient>
 </defs>
-<rect x="8" y="8" width="224" height="224" rx="10" fill="#0d0b0c" stroke="url(#fr)" stroke-width="7"/>
+<rect x="8" y="8" width="224" height="224" rx="10" fill="url(#bg)" stroke="url(#fr)" stroke-width="7"/>
 <circle cx="120" cy="82" r="43" fill="url(#sp)"/>
 <polygon points="52,102 114,134 114,190 52,158" fill="url(#pl)"/>
 <polygon points="188,102 126,134 126,190 188,158" fill="url(#pr)"/>
