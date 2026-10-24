@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PaSEClaban 2026 Tabulation</title>
+<meta name="theme-color" content="#1a0507">
+<link rel="icon" href="assets/sec_logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#120305; --bg2:#2a070b; --panel:rgba(30,6,9,.78); --panel2:rgba(55,10,15,.72);
+  --line:rgba(212,175,55,.22); --line2:rgba(255,255,255,.08);
+  --red:#c4121f; --gold:#d9b54a; --gold2:#f4dd8a; --silver:#d6d9de; --bronze:#d98a4a;
+  --text:#f3ece9; --muted:#b9a7a3; --r:14px;
+}
+*{box-sizing:border-box}
+html{background:#120305}
+html,body{margin:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1200px 600px at 70% -10%, rgba(196,18,31,.45), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(125,10,18,.55), transparent 60%),
+    linear-gradient(180deg,var(--bg2),var(--bg));
+  background-attachment:fixed;
+  color:var(--text); font-family:Rajdhani,system-ui,sans-serif; font-size:17px; line-height:1.35;
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:6px 6px;opacity:.5;z-index:-1}
+h1,h2,h3,.orb{font-family:Orbitron,sans-serif;letter-spacing:.04em;margin:0}
+.gold-text{background:linear-gradient(180deg,var(--gold2),var(--gold) 55%,#9c7a1e);-webkit-background-clip:text;background-clip:text;color:transparent}
+.silver-text{background:linear-gradient(180deg,#fff,#c3c7cc 60%,#80868d);-webkit-background-clip:text;background-clip:text;color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+
+/* buttons / inputs */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);
+  background:var(--panel2);padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:700;letter-spacing:.03em;transition:.15s}
+.btn:hover{border-color:var(--gold)}
+.btn.primary{background:linear-gradient(180deg,#d61a28,#8e0b15);border-color:#e0434e}
+.btn.gold{background:linear-gradient(180deg,#e9c763,#a9851f);color:#1d1203;border-color:#f4dd8a}
+.btn.ghost{background:transparent}
+.btn.sm{padding:6px 11px;font-size:15px}
+.btn.danger{border-color:#e0434e;color:#ff8a91;background:transparent}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5;cursor:default}
+.field{display:flex;flex-direction:column;gap:5px;text-align:left;margin-bottom:12px}
+.field label{font-size:14px;color:var(--muted);font-weight:600}
+.input{background:rgba(0,0,0,.35);border:1px solid var(--line2);border-radius:9px;padding:9px 11px;width:100%;outline:none}
+.input:focus{border-color:var(--gold)}
+select.input{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);
+  background-position:calc(100% - 15px) 55%,calc(100% - 10px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:26px}
+select.input option{background:#2a070b}
+.err{color:#ff8a91;font-size:14px;min-height:18px;margin-top:6px}
+
+/* header */
+header.top{position:sticky;top:0;z-index:20;background:rgba(18,3,5,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+.logo-btn{background:none;border:0;padding:0;cursor:pointer;line-height:0;border-radius:8px}
+.logo-btn img{width:40px;height:40px;display:block}
+.logo-btn:focus-visible{outline:2px solid var(--gold)}
+.brand{flex:1;min-width:0}
+.brand h1{font-size:18px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{display:block;font-size:12px;color:var(--muted);letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{font-family:Orbitron;font-size:11px;letter-spacing:.12em;padding:5px 9px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.badge.edit{background:rgba(217,181,74,.15);color:var(--gold2);border-color:var(--gold)}
+.badge.demo{color:#ffcf7a;border-color:#a8761f}
+nav.tabs{max-width:1200px;margin:0 auto;display:flex;gap:2px;padding:0 10px;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{background:none;border:0;padding:10px 14px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs button.on{color:var(--gold2);border-bottom-color:var(--gold)}
+main{max-width:1200px;margin:0 auto;padding:16px 16px 60px}
+
+/* hero */
+.hero{text-align:center;padding:10px 0 16px}
+.hero .school{font-family:Orbitron;font-size:12px;letter-spacing:.3em;color:var(--silver)}
+.hero h2{font-size:clamp(30px,8vw,52px);font-weight:900;line-height:1.05;margin:4px 0}
+.hero .theme{font-size:14px;color:var(--muted);font-style:italic;max-width:520px;margin:4px auto 0}
+.hero .date{font-family:Orbitron;font-size:12px;letter-spacing:.14em;color:var(--gold);margin-top:6px}
+
+.sec-title{display:flex;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.sec-title h2{font-size:16px}
+.seg{display:inline-flex;background:rgba(0,0,0,.35);border:1px solid var(--line2);border-radius:10px;padding:3px;max-width:100%;overflow-x:auto}
+.seg button{background:none;border:0;padding:7px 12px;border-radius:8px;cursor:pointer;font-weight:700;color:var(--muted);white-space:nowrap}
+.seg button.on{background:linear-gradient(180deg,#d61a28,#8e0b15);color:#fff}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{border:1px solid var(--line2);background:rgba(0,0,0,.3);padding:6px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;font-weight:600;color:var(--muted)}
+.chip.on{border-color:var(--gold);color:var(--gold2);background:rgba(217,181,74,.1)}
+.announce{border-left:4px solid var(--gold);background:rgba(217,181,74,.08);padding:10px 14px;border-radius:8px;margin-bottom:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+
+/* overall */
+.podium{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:end;margin:6px 0 16px}
+.podium.two{grid-template-columns:repeat(2,1fr);max-width:640px;margin-left:auto;margin-right:auto}
+.pod{text-align:center;background:var(--panel2);border:1px solid var(--line);border-radius:var(--r);padding:14px 8px;position:relative}
+.pod img{width:min(110px,100%);aspect-ratio:1;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.6))}
+.pod .nm{font-weight:700;font-size:16px;margin-top:6px;line-height:1.15}
+.pod .un{font-size:12px;color:var(--muted)}
+.pod .pt{font-family:Orbitron;font-size:22px;font-weight:900;margin-top:4px}
+.pod .rk{position:absolute;top:8px;left:10px;font-family:Orbitron;font-weight:900;font-size:18px}
+.pod.p1{order:2;padding-top:24px;border-color:var(--gold);box-shadow:0 0 30px rgba(217,181,74,.18)}
+.pod.p2{order:1}.pod.p3{order:3}
+.podium.two .pod.p1{order:1}.podium.two .pod.p2{order:2}
+.pod.p1 .rk{color:var(--gold2)}.pod.p2 .rk{color:var(--silver)}.pod.p3 .rk{color:var(--bronze)}
+
+.table{width:100%;border-collapse:separate;border-spacing:0 6px}
+.table th{font-size:12px;color:var(--muted);text-align:left;font-weight:600;padding:0 10px;letter-spacing:.06em}
+.table td{background:var(--panel2);padding:9px 10px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.table td:first-child{border-left:1px solid var(--line2);border-radius:10px 0 0 10px}
+.table td:last-child{border-right:1px solid var(--line2);border-radius:0 10px 10px 0}
+.t-rank{font-family:Orbitron;font-weight:900;width:44px;text-align:center}
+.t-team{display:flex;align-items:center;gap:10px;font-weight:700}
+.t-team img{width:40px;height:40px;object-fit:contain;flex:none}
+.t-team .un{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.t-num{text-align:center;font-weight:700;width:52px}
+.t-pts{font-family:Orbitron;font-weight:900;font-size:18px;text-align:right;width:110px}
+.bar{height:4px;border-radius:4px;background:rgba(255,255,255,.08);margin-top:5px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--red),var(--gold))}
+.medal{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.m1{background:var(--gold)}.m2{background:var(--silver)}.m3{background:var(--bronze)}
+
+/* events */
+.ev-group{margin-bottom:18px}
+.ev-group-h{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ev-group-h h3{font-family:Rajdhani;font-size:21px;font-weight:700;letter-spacing:0}
+.cat{font-family:Orbitron;font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;letter-spacing:.08em}
+.cat.A{background:rgba(217,181,74,.18);color:var(--gold2)}
+.cat.B{background:rgba(214,217,222,.14);color:var(--silver)}
+.cat.C{background:rgba(217,138,74,.16);color:#f0b07a}
+.type{font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
+.ev{background:var(--panel2);border:1px solid var(--line2);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.ev-h{display:flex;gap:8px;align-items:center}
+.ev-h b{font-size:18px;flex:1}
+.st{font-size:10px;font-family:Orbitron;letter-spacing:.1em;padding:4px 7px;border-radius:6px;white-space:nowrap}
+.st.upcoming{background:rgba(255,255,255,.07);color:var(--muted)}
+.st.ongoing{background:rgba(229,168,58,.15);color:#ffc865}
+.st.final{background:rgba(57,194,122,.14);color:#6fe0a3}
+.places{display:flex;flex-direction:column;gap:6px}
+.place{display:grid;grid-template-columns:44px 30px 1fr auto;gap:8px;align-items:center}
+.place img{width:30px;height:30px;object-fit:contain}
+.place .r{font-family:Orbitron;font-size:12px;color:var(--muted);font-weight:700}
+.place .n{font-weight:700;line-height:1.1;min-width:0}
+.place .n small{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.place .p{font-family:Orbitron;font-size:13px;color:var(--gold2);text-align:right;white-space:nowrap}
+.place.r1 .r{color:var(--gold2)}.place.r2 .r{color:var(--silver)}.place.r3 .r{color:var(--bronze)}
+.place.x{opacity:.6}
+.place.x .p{color:#ff8a91}
+.empty{text-align:center;color:var(--muted);padding:26px 10px}
+
+/* breakdown */
+.scroll-x{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
+.mx{border-collapse:collapse;min-width:100%;font-size:15px}
+.mx th,.mx td{padding:7px 10px;border-bottom:1px solid var(--line2);white-space:nowrap;text-align:center}
+.mx th{background:rgba(0,0,0,.45);position:sticky;top:0;font-size:12px;color:var(--muted)}
+.mx th img{width:34px;height:34px;object-fit:contain;display:block;margin:0 auto 2px}
+.mx td:first-child,.mx th:first-child{text-align:left;position:sticky;left:0;background:#1d0508;z-index:1;white-space:normal;min-width:150px;max-width:210px}
+.mx tr.tot td{font-family:Orbitron;font-weight:900;color:var(--gold2);background:rgba(217,181,74,.08)}
+.mx td.z{color:rgba(255,255,255,.25)}
+
+/* admin */
+.ed-list{display:flex;flex-direction:column;gap:6px}
+.ed-item{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:9px 12px;flex-wrap:wrap}
+.ed-item .nm{flex:1;min-width:180px}
+.ed-item .nm b{display:block}
+.ed-item .nm span{font-size:13px;color:var(--muted)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.pt-table{border-collapse:collapse;width:100%;max-width:520px}
+.pt-table th,.pt-table td{padding:4px 6px;text-align:center}
+.pt-table input{text-align:center;padding:6px}
+.team-row{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;margin-bottom:10px}
+.team-row img{width:44px;height:44px;object-fit:contain}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:14px}
+.modal-in{width:100%;max-width:640px;max-height:92vh;overflow:auto;background:linear-gradient(180deg,#2c070c,#170306);border:1px solid var(--line);border-radius:16px;padding:18px}
+.modal-in.narrow{max-width:400px}
+.modal-in h3{font-size:16px;margin-bottom:4px}
+.res-table{width:100%;border-collapse:collapse;margin-top:8px}
+.res-table th{font-size:12px;color:var(--muted);font-weight:600;padding:4px;text-align:center}
+.res-table th:first-child{text-align:left}
+.res-table td{padding:6px 4px;border-bottom:1px solid var(--line2);text-align:center}
+.res-table td:first-child{text-align:left}
+.res-table .tm{display:flex;align-items:center;gap:8px;font-weight:700;line-height:1.1}
+.res-table .tm img{width:32px;height:32px;object-fit:contain}
+.res-table select{min-width:74px;padding:7px 22px 7px 8px}
+.res-table .calc{font-family:Orbitron;font-size:12px;color:var(--gold2)}
+.warn{color:#ffc865;font-size:14px;margin-top:8px}
+.subs{display:flex;flex-direction:column;gap:10px}
+.sub-block{background:rgba(0,0,0,.25);border:1px solid var(--line2);border-radius:12px;padding:10px}
+.sub-h{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.sub-h .input{font-weight:700}
+.sub-n{font-family:Orbitron;font-size:12px;color:var(--gold);width:20px;text-align:center}
+.sub-r{display:grid;grid-template-columns:30px 1fr 104px 54px;gap:8px;align-items:center;padding:4px 0;border-top:1px solid var(--line2)}
+.sub-r img{width:28px;height:28px;object-fit:contain}
+.sub-r span{font-weight:600;line-height:1.1}
+.sub-r select{padding:6px 22px 6px 8px}
+.sub-r .calc,.res-table .calc{font-family:Orbitron;font-size:12px;color:var(--gold2);text-align:right}
+details.subd summary{cursor:pointer;color:var(--gold2);font-weight:700;font-size:14px}
+.mx.sm{font-size:13px}.mx.sm th img{width:26px;height:26px}
+.mx .pp{font-family:Orbitron;font-size:10px;color:var(--gold2)}
+.signin-logo{width:110px;height:110px;display:block;margin:0 auto 10px;filter:drop-shadow(0 8px 24px rgba(196,18,31,.5))}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#2a070b;border:1px solid var(--gold);padding:10px 16px;border-radius:10px;z-index:60;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.foot{text-align:center;color:var(--muted);font-size:13px;margin-top:26px}
+.note{font-size:13px;color:var(--muted)}
+
+/* ---------- motion (subtle) ---------- */
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes shimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes glow{0%,100%{box-shadow:0 0 22px rgba(217,181,74,.14)}50%{box-shadow:0 0 34px rgba(217,181,74,.30)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+#view.enter .hero,#view.enter .sec-title,#view.enter .announce,#view.enter .pod,#view.enter .table tbody tr,
+#view.enter .ev-group,#view.enter .ed-item,#view.enter .panel,#view.enter .scroll-x,#view.enter .chips,#view.enter .row{
+  animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 50ms)}
+.hero h2{background-image:linear-gradient(100deg,#9c7a1e 0%,var(--gold) 20%,var(--gold2) 30%,var(--gold) 40%,#9c7a1e 60%,var(--gold) 80%,#9c7a1e 100%);
+  background-size:200% 100%;animation:shimmer 7s linear infinite}
+.pod.p1{animation:glow 4s ease-in-out infinite}
+#view.enter .pod.p1{animation:rise .5s cubic-bezier(.2,.7,.2,1) both,glow 4s ease-in-out .6s infinite;animation-delay:calc(var(--i,0) * 50ms),.6s}
+.bar i{transition:width 1s cubic-bezier(.2,.7,.2,1)}
+.modal{animation:fadeIn .18s ease-out}
+.modal-in{animation:pop .24s cubic-bezier(.2,.7,.2,1)}
+.toast{animation:toastIn .25s cubic-bezier(.2,.7,.2,1)}
+.logo-btn{transition:transform .2s,filter .2s}
+.logo-btn:hover{transform:scale(1.06);filter:drop-shadow(0 0 8px rgba(217,181,74,.45))}
+nav.tabs button{transition:color .2s,border-color .2s}
+.seg button,.chip{transition:background .2s,color .2s,border-color .2s}
+.ev,.pod,.ed-item{transition:transform .2s,border-color .2s}
+.ev:hover,.ed-item:hover{border-color:var(--line)}
+.pod:hover{transform:translateY(-2px)}
+.st.ongoing::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#ffc865;margin-right:5px;vertical-align:1px;animation:pulse 1.4s ease-in-out infinite}
+.t-pts span,.pod .pt{font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
+
+@media (max-width:640px){
+  body{font-size:16px}
+  .top-in{gap:8px;padding:8px 12px}
+  .brand h1{font-size:15px}
+  .logo-btn img{width:34px;height:34px}
+  .badge{font-size:9px;padding:4px 7px}
+  .podium{gap:7px}
+  .pod{padding:10px 4px}
+  .pod .nm{font-size:13px}
+  .pod .pt{font-size:16px}
+  .t-hide{display:none}
+  .t-team img{width:32px;height:32px}
+  .t-pts{font-size:15px;width:78px}
+  .table td{padding:8px 6px}
+  .grid{grid-template-columns:1fr}
+  main{padding:12px 12px 60px}
+  .res-table select{min-width:62px;font-size:14px}
+  .mx{font-size:13px}
+  .mx th,.mx td{padding:6px 7px}
+  .mx td:first-child,.mx th:first-child{min-width:120px;max-width:140px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <button class="logo-btn" id="secLogo" title="Surigao Education Center" aria-label="SEC logo — admin sign-in"><img src="assets/sec_logo.svg" alt="SEC logo"></button>
+    <div class="brand">
+      <h1 class="gold-text">PaSEClaban 2026</h1>
+      <small id="syncInfo">Loading…</small>
+    </div>
+    <span class="badge demo hidden" id="demoBadge">DEMO</span>
+    <span class="badge edit hidden" id="modeBadge">ADMIN</span>
+    <button class="btn sm ghost hidden" id="btnLogout">Sign out</button>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+<main id="view"></main>
+<div id="modalHost"></div>
+
+<script>
+/* =========================================================
+   CONFIG — paste the Apps Script Web App URL here.
+   Empty = DEMO MODE (data saved only in this browser).
+   ========================================================= */
+const CONFIG = {
+  API_URL: 'https://script.google.com/macros/s/AKfycbxY-JVCeK_FucO-WVUKjk8kKzDcrIwjCFsFo1v21kwYr1cn497h9xGNBJlV5MWwzr9n/exec',
+  DEMO_USER: '', DEMO_PASSWORD: '',   // used only when API_URL is empty
+  POLL_MS: 20000
+};
+
+/* ---------- Point system: Guidelines Art. II Sec. 1 ---------- */
+const DEFAULT_POINTS = {
+  A: [50, 40, 32, 26, 21, 17, 13, 11, 9, 7],
+  B: [35, 28, 22, 18, 14, 12, 9, 7, 6, 5],
+  C: [25, 20, 16, 13, 10, 8, 6, 5, 4, 3]
+};
+
+/* ---------- Events: Annex A (Intramurals 2026) ---------- */
+function buildEvents() {
+  const out = [];
+  // pool 'sub'   = each sub-event ranked on its own (Badminton/Table Tennis Singles+Doubles, Swimming)
+  // pool 'event' = all entrants ranked in one list (Chess players, Little Mr./Ms. candidates)
+  const add = (dept, name, cat, divs, type, subs, pool) => divs.forEach(div => out.push({
+    id: (dept + '-' + name + '-' + (div || 'open')).toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    dept, name, division: div, category: cat, type: type || 'single',
+    subs: (subs || []).map((l, i) => ({ id: 's' + (i + 1), label: l })), pool: pool || 'sub', status: 'upcoming', res: {}
+  }));
+  const MW = ['Men', 'Women'], MWX = ['Men', 'Women', 'Mixed'];
+  const SWIM = ['50 m. Freestyle', '50 m. Breast Stroke', '50 m. Back Stroke', '50 m. Butterfly Stroke',
+                '100 m. Individual Medley', '4x25 m. Medley Relay', '4x25 m. Freestyle Relay'];
+  // College and High School
+  add('chs', 'Basketball', 'A', MW);
+  add('chs', 'Volleyball', 'A', MW);
+  add('chs', 'Sepak Takraw', 'A', ['']);
+  add('chs', 'Cheer Dance', 'A', ['']);
+  add('chs', 'Mr. and Ms. PaSEClaban', 'B', MW);
+  add('chs', 'Chess', 'B', MW, 'multi', ['Player 1', 'Player 2'], 'event');
+  add('chs', 'Mobile Legends', 'B', ['']);
+  add('chs', 'Call of Duty Mobile', 'B', ['']);
+  add('chs', 'Table Tennis', 'B', MW, 'multi', ['Singles', 'Doubles']);
+  add('chs', 'Table Tennis', 'B', ['Mixed']);
+  add('chs', 'Badminton', 'B', MW, 'multi', ['Singles', 'Doubles']);
+  add('chs', 'Badminton', 'B', ['Mixed']);
+  add('chs', 'Pickleball', 'B', MWX);
+  add('chs', 'Swimming', 'B', MW, 'multi', SWIM);
+  add('chs', 'Bench Yell', 'B', ['']);
+  add('chs', 'Dance Sport – Latin Section', 'B', ['']);
+  add('chs', 'Dance Sport – Standard Section', 'B', ['']);
+  add('chs', 'Banner Raising', 'C', ['']);
+  // Elementary
+  add('elem', 'Basketball', 'A', ['Men']);
+  add('elem', 'Volleyball', 'A', MW);
+  add('elem', 'Mass Dance', 'A', ['']);
+  add('elem', 'Little Mr. and Ms. PaSEClaban', 'A', MW, 'multi', ['Candidate 1', 'Candidate 2'], 'event');
+  add('elem', 'Chess', 'B', MW, 'multi', ['Player 1', 'Player 2'], 'event');
+  add('elem', 'Table Tennis', 'B', MW, 'multi', ['Singles', 'Doubles']);
+  add('elem', 'Table Tennis', 'B', ['Mixed']);
+  add('elem', 'Badminton', 'B', MW, 'multi', ['Singles', 'Doubles']);
+  add('elem', 'Badminton', 'B', ['Mixed']);
+  add('elem', 'Swimming', 'B', MW, 'multi', ['25 m. Freestyle', '25 m. Breast Stroke', '25 m. Back Stroke', '25 m. Butterfly Stroke']);
+  add('elem', 'Dance Sport – Latin Section', 'B', ['']);
+  add('elem', 'Dance Sport – Standard Section', 'B', ['']);
+  add('elem', 'Banner Raising', 'C', ['']);
+  return out;
+}
+
+const DEFAULT_STATE = {
+  schema: 3,
+  depts: [
+    { id: 'chs',  name: 'College and High School' },
+    { id: 'elem', name: 'Elementary' }
+  ],
+  teams: [
+    { id: 'raptors',  name: 'Racing Raptors',        unit: '',            dept: 'chs',  logo: 'assets/logos/raptors.png' },
+    { id: 'mambas',   name: 'Phantom Mambas',        unit: '',            dept: 'chs',  logo: 'assets/logos/mambas.png' },
+    { id: 'griffins', name: 'Mighty Griffins',       unit: '',            dept: 'chs',  logo: 'assets/logos/griffins.png' },
+    { id: 'cerberus', name: 'Cerberus',              unit: '',            dept: 'chs',  logo: 'assets/logos/cerberus.png' },
+    { id: 'cyborgs',  name: 'CIT Cyborgs',           unit: 'CIT',         dept: 'chs',  logo: 'assets/logos/cyborgs.png' },
+    { id: 'hornets',  name: "D' Pugnacious Hornets", unit: 'Grade School', dept: 'elem', logo: 'assets/logos/hornets.png' },
+    { id: 'monarch',  name: 'Maverick Monarch',      unit: 'Montessori',  dept: 'elem', logo: 'assets/logos/monarch.png' }
+  ],
+  points: DEFAULT_POINTS,
+  announcement: '',
+  events: buildEvents(),
+  updatedAt: null,
+  updatedBy: null
+};
+
+/* ---------- Runtime ---------- */
+const S = { state: null, admin: false, password: '', editor: '', tab: 'overall', dept: 'chs', cat: 'All', evFilter: 'all', lastSync: null, poll: null };
+const DEMO = !CONFIG.API_URL;
+const DEMO_KEY = 'paseclaban2026_demo_v6';
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+const ORD = n => { const s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+const f2 = n => (Math.round(n * 100) / 100).toFixed(2);
+function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+function ss(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { return null; } }
+
+/* ---------- Data layer ---------- */
+let memDemo = null;
+async function apiGet() {
+  if (DEMO) {
+    const raw = ls(DEMO_KEY);
+    if (raw) { try { return JSON.parse(raw); } catch (e) {} }
+    return memDemo || clone(DEFAULT_STATE);
+  }
+  const r = await fetch(CONFIG.API_URL + '?t=' + Date.now());
+  return (await r.json()).state;
+}
+async function apiPost(action, payload) {
+  if (DEMO) {
+    const pw = action === 'login' ? payload.password : S.password;
+    const un = action === 'login' ? payload.username : S.editor;
+    if (!CONFIG.DEMO_PASSWORD || un !== CONFIG.DEMO_USER || pw !== CONFIG.DEMO_PASSWORD) throw new Error('Invalid username or password');
+    let st = await apiGet();
+    if (action === 'login') return st;
+    st = applyLocal(st, action, payload);
+    st.updatedAt = new Date().toISOString(); st.updatedBy = S.editor || 'Admin';
+    memDemo = st; ls(DEMO_KEY, JSON.stringify(st));
+    return st;
+  }
+  const mirror = payload._mirror || null; delete payload._mirror;
+  const body = action === 'login'
+    ? { action, username: payload.username, password: payload.password }
+    : { action, username: S.editor, password: S.password, payload, mirror };
+  const r = await fetch(CONFIG.API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || 'Save failed');
+  return j.state;
+}
+function applyLocal(st, action, p) {
+  if (action === 'replaceAll') return p.state;
+  if (action === 'saveEvent') { const i = st.events.findIndex(e => e.id === p.event.id); if (i >= 0) st.events[i] = p.event; else st.events.push(p.event); }
+  if (action === 'deleteEvent') st.events = st.events.filter(e => e.id !== p.id);
+  if (action === 'saveSettings') { st.teams = p.teams; st.points = p.points; st.announcement = p.announcement; }
+  return st;
+}
+async function refresh(silent) {
+  try {
+    let st = await apiGet();
+    if (!st) { st = clone(DEFAULT_STATE); if (S.admin) st = await apiPost('replaceAll', { state: st }); }
+    const changed = !S.state || st.updatedAt !== S.state.updatedAt;
+    S.state = st; S.lastSync = new Date();
+    if (!$('.modal') && (!silent || changed)) render(!silent);
+    updateSync();
+  } catch (e) { if (!silent) toast('Cannot load data. Check connection.'); updateSync(true); }
+}
+
+/* ---------- Scoring engine (Guidelines Art. III–VI) ---------- */
+const teamsOf = dept => S.state.teams.filter(t => t.dept === dept);
+const deptName = id => (S.state.depts.find(d => d.id === id) || {}).name || id;
+const table = cat => S.state.points[cat] || [];
+const ptAt = (cat, rank) => Number(table(cat)[rank - 1]) || 0;
+const divLabel = e => !e.division ? '' : (/Mr\. and Ms\./.test(e.name) ? (e.division === 'Men' ? (e.name.startsWith('Little') ? 'Little Mr.' : 'Mr.') : (e.name.startsWith('Little') ? 'Little Ms.' : 'Ms.')) : e.division === 'Mixed' ? 'Mixed' : e.division + "'s");
+const evTitle = e => e.name + (e.division ? ' — ' + divLabel(e) : '');
+
+// Tied teams share the points of the ranks they occupy, divided equally (Art. VI Sec. 1)
+function awardShared(cat, list) {
+  const out = {}, byRank = {};
+  list.forEach(x => (byRank[x.rank] = byRank[x.rank] || []).push(x.id));
+  Object.entries(byRank).forEach(([r, ids]) => {
+    r = +r; let sum = 0;
+    for (let k = 0; k < ids.length; k++) sum += ptAt(cat, r + k);
+    ids.forEach(id => out[id] = sum / ids.length);
+  });
+  return out;
+}
+
+// Cell values in res[team].p[subId]: rank number | 'D' (default) | 'Q' (disqualified)
+// Returns rows: { team, rank, tied, points, flag, detail:[{id,label,rank,mark,pts,tied}], total }
+function computeEvent(e) {
+  const teams = teamsOf(e.dept);
+  const R = e.res || {};
+  let rows;
+  if (e.type === 'multi') {
+    // Step 1: placement points; ties inside a ranking list share points (Art. VI Sec. 1)
+    const cell = (t, s) => ((R[t.id] || {}).p || {})[s.id];
+    const pp = {};   // key team|sub -> placement points
+    const tiedK = {};
+    const pools = e.pool === 'event' ? [e.subs] : e.subs.map(s => [s]);
+    pools.forEach(subs => {
+      const list = [];
+      teams.forEach(t => subs.forEach(s => { const n = Number(cell(t, s)); if (n) list.push({ id: t.id + '|' + s.id, rank: n }); }));
+      Object.assign(pp, awardShared(e.category, list));
+      const c = {}; list.forEach(x => c[x.rank] = (c[x.rank] || 0) + 1);
+      list.forEach(x => tiedK[x.id] = c[x.rank] > 1);
+    });
+    rows = teams.map(t => {
+      const r = R[t.id] || {};
+      const detail = e.subs.map(s => {
+        const v = cell(t, s), k = t.id + '|' + s.id;
+        if (v === 'D' || v === 'Q') return { id: s.id, label: s.label, rank: null, mark: v, pts: 0 };
+        const n = Number(v) || null;
+        return { id: s.id, label: s.label, rank: n, mark: '', pts: n ? pp[k] || 0 : 0, tied: !!tiedK[k] };
+      });
+      // Step 2: add placement points within the division
+      const total = Math.round(detail.reduce((a, d) => a + d.pts, 0) * 100) / 100;
+      return { team: t, flag: r.flag || '', detail, total };
+    });
+    // Step 3: rank teams by total; only teams with placement points are ranked; DQ position stays vacant
+    const ranked = rows.filter(x => x.total > 0).sort((a, b) => b.total - a.total);
+    ranked.forEach((x, i) => { x.rank = (i && ranked[i - 1].total === x.total) ? ranked[i - 1].rank : i + 1; });
+    const live = ranked.filter(x => x.flag !== 'dq');
+    const aw = awardShared(e.category, live.map(x => ({ id: x.team.id, rank: x.rank })));
+    rows.forEach(x => x.points = x.flag === 'dq' ? 0 : (aw[x.team.id] || 0));
+  } else {
+    rows = teams.map(t => {
+      const r = R[t.id] || {};
+      return { team: t, flag: r.flag || '', rank: r.flag === 'def' ? null : (Number(r.rank) || null) };
+    });
+    const live = rows.filter(x => x.rank && x.flag !== 'dq');
+    const aw = awardShared(e.category, live.map(x => ({ id: x.team.id, rank: x.rank })));
+    rows.forEach(x => x.points = (x.flag === 'dq' || x.flag === 'def') ? 0 : (aw[x.team.id] || 0));
+  }
+  const cnt = {}; rows.forEach(x => { if (x.rank) cnt[x.rank] = (cnt[x.rank] || 0) + 1; });
+  rows.forEach(x => x.tied = x.rank && cnt[x.rank] > 1);
+  rows.sort((a, b) => (a.rank || 99) - (b.rank || 99) || b.points - a.points || a.team.name.localeCompare(b.team.name));
+  return rows;
+}
+const hasResults = e => Object.values(e.res || {}).some(r => r.rank || r.flag || Object.values(r.p || {}).some(Boolean));
+
+function overall(dept) {
+  const rows = teamsOf(dept).map(t => ({ team: t, pts: 0, m: [0, 0, 0] }));
+  const idx = Object.fromEntries(rows.map(r => [r.team.id, r]));
+  S.state.events.filter(e => e.dept === dept && e.status === 'final').forEach(e => {
+    computeEvent(e).forEach(x => {
+      const o = idx[x.team.id]; if (!o) return;
+      o.pts += x.points;
+      if (x.flag !== 'dq' && x.rank >= 1 && x.rank <= 3) o.m[x.rank - 1]++;
+    });
+  });
+  rows.forEach(r => r.pts = Math.round(r.pts * 100) / 100);
+  rows.sort((a, b) => b.pts - a.pts || a.team.name.localeCompare(b.team.name));
+  rows.forEach((r, i) => r.rank = (i && rows[i - 1].pts === r.pts) ? rows[i - 1].rank : i + 1);
+  return rows;
+}
+
+/* ---------- Render ---------- */
+function tabs() {
+  const t = [['overall', 'Overall'], ['events', 'Per Event'], ['breakdown', 'Breakdown']];
+  if (S.admin) t.push(['manage', 'Manage Events'], ['settings', 'Settings']);
+  return t;
+}
+function deptSeg() {
+  return `<div class="seg">${S.state.depts.map(d => `<button class="${S.dept === d.id ? 'on' : ''}" data-dept="${d.id}">${esc(d.name)}</button>`).join('')}</div>`;
+}
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function render(anim = true) {
+  if (!S.state) return;
+  $('#tabs').innerHTML = tabs().map(([k, l]) => `<button class="${S.tab === k ? 'on' : ''}" data-tab="${k}">${l}</button>`).join('');
+  const ann = S.state.announcement ? `<div class="announce">${esc(S.state.announcement)}</div>` : '';
+  const V = { overall: vOverall, events: vEvents, breakdown: vBreakdown, manage: vManage, settings: vSettings }[S.tab] || vOverall;
+  $('#view').innerHTML = (S.tab === 'manage' || S.tab === 'settings' ? '' : ann) + V() +
+    `<div class="foot">Surigao Education Center · PaSEClaban 2026 · October 27–30, 2026</div>`;
+  if (anim && !REDUCED) animateView();
+}
+
+function animateView() {
+  const v = $('#view');
+  v.classList.remove('enter'); void v.offsetWidth; v.classList.add('enter');
+  let i = 0;
+  v.querySelectorAll('.hero,.sec-title,.announce,.pod,.table tbody tr,.ev-group,.ed-item,.panel,.scroll-x,.chips,.row')
+    .forEach(el => el.style.setProperty('--i', Math.min(i++, 14)));
+  // bars grow from zero
+  v.querySelectorAll('.bar i[data-w]').forEach(b => { b.style.width = '0%'; });
+  requestAnimationFrame(() => requestAnimationFrame(() => v.querySelectorAll('.bar i[data-w]').forEach(b => b.style.width = b.dataset.w + '%')));
+  // points count up
+  const els = [...v.querySelectorAll('[data-count]')].map(el => ({ el, to: Number(el.dataset.count) || 0 }));
+  if (!els.length) return;
+  const t0 = performance.now(), dur = 900, ease = t => 1 - Math.pow(1 - t, 3);
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur);
+    els.forEach(o => o.el.textContent = f2(o.to * ease(k)));
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+function vOverall() {
+  const rows = overall(S.dept);
+  const max = Math.max(1, ...rows.map(r => r.pts));
+  const evs = S.state.events.filter(e => e.dept === S.dept);
+  const fin = evs.filter(e => e.status === 'final').length;
+  const top = rows.slice(0, 3);
+  return `
+  <div class="hero">
+    <div class="school">SURIGAO EDUCATION CENTER</div>
+    <h2 class="gold-text">PaSEClaban 2026</h2>
+    <div class="theme">“Unleash the Surge: Driven by Grit, Break the Limits, One Unstoppable Spirit”</div>
+    <div class="date">OCTOBER 27–30, 2026</div>
+  </div>
+  <div class="sec-title"><h2 class="silver-text">OVERALL STANDINGS</h2></div>
+  <div class="row" style="margin-bottom:12px">${deptSeg()}<span class="spacer"></span><span class="muted" style="font-size:14px">${fin} of ${evs.length} events final</span></div>
+  ${rows.some(r => r.pts) ? '' : '<!--'}<div class="podium ${top.length === 2 ? 'two' : ''}">${top.map((r, i) => `
+    <div class="pod p${i + 1}"><div class="rk">${r.rank}</div><img src="${r.team.logo}" alt="">
+      <div class="nm">${esc(r.team.name)}</div>${r.team.unit ? `<div class="un">${esc(r.team.unit)}</div>` : ''}
+      <div class="pt ${i === 0 ? 'gold-text' : 'silver-text'}" data-count="${r.pts}">${f2(r.pts)}</div></div>`).join('')}</div>${rows.some(r => r.pts) ? '' : '-->'}
+  <div class="panel" style="padding:6px 10px">
+    <table class="table"><thead><tr><th>#</th><th>TEAM</th>
+      <th class="t-num t-hide"><span class="medal m1"></span>1st</th><th class="t-num t-hide"><span class="medal m2"></span>2nd</th><th class="t-num t-hide"><span class="medal m3"></span>3rd</th>
+      <th style="text-align:right">POINTS</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td class="t-rank">${r.rank}</td>
+      <td><div class="t-team"><img src="${r.team.logo}" alt=""><div style="flex:1;min-width:0">${esc(r.team.name)}${r.team.unit ? `<span class="un">${esc(r.team.unit)}</span>` : ''}<div class="bar"><i data-w="${r.pts / max * 100}" style="width:${r.pts / max * 100}%"></i></div></div></div></td>
+      <td class="t-num t-hide">${r.m[0]}</td><td class="t-num t-hide">${r.m[1]}</td><td class="t-num t-hide">${r.m[2]}</td>
+      <td class="t-pts"><span class="gold-text" data-count="${r.pts}">${f2(r.pts)}</span></td></tr>`).join('')}
+    </tbody></table>
+  </div>
+  <p class="note">Overall points = sum of points from all events marked <b>Final</b>. Each department is tabulated separately. 1st/2nd/3rd = event placements (display only).</p>`;
+}
+
+function placeRow(e, x) {
+  let r = x.rank ? (x.tied ? 'T-' : '') + ORD(x.rank) : '—';
+  let p = f2(x.points);
+  let cls = 'place r' + (x.flag ? '' : (x.rank || 0));
+  if (x.flag === 'dq') { cls = 'place x'; p = 'DQ · 0.00'; }
+  if (x.flag === 'def') { cls = 'place x'; r = '—'; p = 'Default · 0.00'; }
+  const sub = e.type === 'multi' ? `<small>Placement total ${f2(x.total)}</small>` : (x.team.unit ? `<small>${esc(x.team.unit)}</small>` : '');
+  return `<div class="${cls}"><span class="r">${r}</span><img src="${x.team.logo}" alt=""><span class="n">${esc(x.team.name)}${sub}</span><span class="p">${p}</span></div>`;
+}
+
+function cellTxt(d) { return d.mark === 'D' ? 'Default' : d.mark === 'Q' ? 'DQ' : d.rank ? (d.tied ? 'T-' : '') + ORD(d.rank) : '—'; }
+function subDetails(e, rows) {
+  // Per sub-event placements (Art. IV Steps 1–2)
+  const byTeam = Object.fromEntries(rows.map(x => [x.team.id, x]));
+  const teams = rows.map(x => x.team);
+  return `<details class="subd"><summary>${e.pool === 'event' ? 'Entrant placements' : 'Sub-event results'} (${e.subs.length})</summary>
+    <div class="scroll-x" style="margin-top:8px"><table class="mx sm">
+      <thead><tr><th>${e.pool === 'event' ? 'ENTRANT' : 'SUB-EVENT'}</th>${teams.map(t => `<th><img src="${t.logo}" alt="">${esc(t.unit || t.name)}</th>`).join('')}</tr></thead>
+      <tbody>${e.subs.map(sb => `<tr><td>${esc(sb.label)}</td>${teams.map(t => { const d = byTeam[t.id].detail.find(q => q.id === sb.id); return `<td class="${d.pts ? '' : 'z'}">${cellTxt(d)}${d.pts ? `<br><span class="pp">${f2(d.pts)}</span>` : ''}</td>`; }).join('')}</tr>`).join('')}
+      <tr class="tot"><td>TOTAL</td>${teams.map(t => `<td>${f2(byTeam[t.id].total)}</td>`).join('')}</tr></tbody>
+    </table></div></details>`;
+}
+
+function eventCard(e) {
+  const rows = computeEvent(e);
+  const any = hasResults(e);
+  return `<div class="ev">
+    <div class="ev-h"><b>${esc(e.division ? divLabel(e) : 'Result')}</b><span class="st ${e.status}">${e.status.toUpperCase()}</span></div>
+    ${any ? `<div class="places">${rows.filter(x => x.rank || x.flag).map(x => placeRow(e, x)).join('')}</div>` : `<div class="muted" style="font-size:14px">No results yet.</div>`}
+    ${any && e.type === 'multi' ? subDetails(e, rows) : ''}
+    ${S.admin ? `<div class="row"><button class="btn sm gold" data-res="${e.id}">Enter results</button></div>` : ''}
+  </div>`;
+}
+
+function vEvents() {
+  let evs = S.state.events.filter(e => e.dept === S.dept);
+  if (S.cat !== 'All') evs = evs.filter(e => e.category === S.cat);
+  if (S.evFilter !== 'all') evs = evs.filter(e => e.status === S.evFilter);
+  const groups = [];
+  evs.forEach(e => { let g = groups.find(x => x.name === e.name); if (!g) groups.push(g = { name: e.name, cat: e.category, type: e.type, list: [] }); g.list.push(e); });
+  const ord = { Men: 0, Women: 1, Mixed: 2, '': 3 };
+  groups.forEach(g => g.list.sort((a, b) => ord[a.division] - ord[b.division]));
+  groups.sort((a, b) => a.cat.localeCompare(b.cat));
+  return `
+  <div class="sec-title"><h2 class="silver-text">RANKINGS PER EVENT</h2></div>
+  <div class="row" style="margin-bottom:10px">${deptSeg()}</div>
+  <div class="chips" style="margin-bottom:6px">${['All', 'A', 'B', 'C'].map(c => `<button class="chip ${S.cat === c ? 'on' : ''}" data-cat="${c}">${c === 'All' ? 'All categories' : 'Category ' + c}</button>`).join('')}</div>
+  <div class="chips" style="margin-bottom:14px">${[['all', 'All status'], ['final', 'Final'], ['ongoing', 'Ongoing'], ['upcoming', 'Upcoming']].map(([k, l]) => `<button class="chip ${S.evFilter === k ? 'on' : ''}" data-evf="${k}">${l}</button>`).join('')}</div>
+  ${groups.length ? groups.map(g => `
+    <div class="ev-group">
+      <div class="ev-group-h"><h3>${esc(g.name)}</h3><span class="cat ${g.cat}">CAT ${g.cat}</span>${g.list.some(e => e.type === 'multi') ? '<span class="type">Multi-representative</span>' : ''}</div>
+      <div class="grid">${g.list.map(eventCard).join('')}</div>
+    </div>`).join('') : '<div class="empty">No events in this filter.</div>'}`;
+}
+
+function vBreakdown() {
+  const teams = teamsOf(S.dept);
+  const evs = S.state.events.filter(e => e.dept === S.dept);
+  const tot = Object.fromEntries(teams.map(t => [t.id, 0]));
+  const body = evs.map(e => {
+    const fin = e.status === 'final';
+    const pts = fin ? Object.fromEntries(computeEvent(e).map(x => [x.team.id, x])) : {};
+    return `<tr><td>${esc(evTitle(e))} <span class="cat ${e.category}" style="font-size:9px;padding:2px 5px">${e.category}</span></td>${teams.map(t => {
+      const x = pts[t.id];
+      if (!fin) return `<td class="z">·</td>`;
+      tot[t.id] += x.points;
+      return `<td class="${x.points ? '' : 'z'}">${x.flag === 'dq' ? 'DQ' : x.flag === 'def' ? 'Def' : f2(x.points)}</td>`;
+    }).join('')}</tr>`;
+  }).join('');
+  return `
+  <div class="sec-title"><h2 class="silver-text">POINTS BREAKDOWN</h2></div>
+  <div class="row" style="margin-bottom:12px">${deptSeg()}</div>
+  <div class="scroll-x"><table class="mx">
+    <thead><tr><th>EVENT</th>${teams.map(t => `<th><img src="${t.logo}" alt="">${esc(t.unit || t.name)}</th>`).join('')}</tr></thead>
+    <tbody>${body}<tr class="tot"><td>OVERALL</td>${teams.map(t => `<td>${f2(tot[t.id])}</td>`).join('')}</tr></tbody>
+  </table></div>
+  <p class="note">Only events marked Final show points. “·” = not yet final.</p>`;
+}
+
+function vManage() {
+  const evs = S.state.events.filter(e => e.dept === S.dept);
+  return `
+  <div class="sec-title"><h2 class="silver-text">MANAGE EVENTS</h2><span class="spacer"></span><button class="btn sm primary" id="btnAdd">+ Add event</button></div>
+  <div class="row" style="margin-bottom:12px">${deptSeg()}</div>
+  <div class="ed-list">${evs.map(e => `
+    <div class="ed-item"><div class="nm"><b>${esc(evTitle(e))}</b><span>Category ${e.category} · ${e.type === 'multi' ? 'Multi · ' + e.subs.length + ' ' + (e.pool === 'event' ? 'entrants' : 'sub-events') : 'Single'}</span></div>
+      <span class="st ${e.status}">${e.status.toUpperCase()}</span>
+      <button class="btn sm gold" data-res="${e.id}">Results</button>
+      <button class="btn sm" data-edit="${e.id}">Edit</button></div>`).join('')}
+  </div>`;
+}
+
+function vSettings() {
+  const st = S.state;
+  return `
+  <div class="sec-title"><h2 class="silver-text">SETTINGS</h2></div>
+  <div class="panel" style="margin-bottom:14px">
+    <h3 style="font-size:13px;margin-bottom:8px">POINTS PER RANK (Art. II Sec. 1)</h3>
+    <table class="pt-table"><thead><tr><th>Rank</th><th>Cat A</th><th>Cat B</th><th>Cat C</th></tr></thead><tbody>
+    ${Array.from({ length: 10 }, (_, i) => `<tr><td>${ORD(i + 1)}</td>${['A', 'B', 'C'].map(c => `<td><input class="input" type="number" step="any" min="0" data-pt="${c}:${i}" value="${st.points[c][i] ?? 0}"></td>`).join('')}</tr>`).join('')}
+    </tbody></table>
+  </div>
+  <div class="panel" style="margin-bottom:14px">
+    <h3 style="font-size:13px;margin-bottom:10px">TEAMS</h3>
+    ${st.teams.map(t => `<div class="team-row"><img src="${t.logo}" alt=""><div class="form-grid">
+      <input class="input" data-tn="${t.id}" value="${esc(t.name)}" placeholder="Team name">
+      <input class="input" data-tu="${t.id}" value="${esc(t.unit)}" placeholder="College / unit (e.g. CEA)">
+      <select class="input" data-td="${t.id}">${st.depts.map(d => `<option value="${d.id}" ${t.dept === d.id ? 'selected' : ''}>${esc(d.name)}</option>`).join('')}</select>
+    </div></div>`).join('')}
+  </div>
+  <div class="panel" style="margin-bottom:14px">
+    <div class="field"><label>Announcement banner (blank = hidden)</label><textarea class="input" id="setAnn" rows="2">${esc(st.announcement || '')}</textarea></div>
+  </div>
+  <div class="row"><button class="btn primary" id="btnSaveSet">Save settings</button><span class="spacer"></span>
+    <button class="btn sm" id="btnExport">Export backup</button>
+    <label class="btn sm" style="cursor:pointer">Import backup<input type="file" accept=".json" id="fileImport" hidden></label>
+    ${DEMO ? '<button class="btn sm danger" id="btnReset">Reset demo</button>' : ''}</div>`;
+}
+
+/* ---------- Modals ---------- */
+function modal(html, narrow) { $('#modalHost').innerHTML = `<div class="modal"><div class="modal-in ${narrow ? 'narrow' : ''}">${html}</div></div>`; }
+function closeModal() { $('#modalHost').innerHTML = ''; render(false); }
+
+function openSignIn() {
+  modal(`
+    <img class="signin-logo" src="assets/sec_logo.svg" alt="SEC logo">
+    <h3 class="gold-text" style="text-align:center;margin-bottom:12px">ADMIN SIGN-IN</h3>
+    <form id="signForm" autocomplete="off">
+      <div class="field"><label>Username</label><input class="input" id="sgName" maxlength="40" autocapitalize="off" spellcheck="false"></div>
+      <div class="field"><label>Password</label><input class="input" id="sgPass" type="password"></div>
+      <div class="err" id="sgErr"></div>
+      <div class="row"><button type="button" class="btn ghost" data-close>Cancel</button><span class="spacer"></span><button class="btn primary" id="sgBtn" type="submit">Sign in</button></div>
+    </form>`, true);
+  setTimeout(() => $('#sgName').focus(), 50);
+  $('#signForm').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const pw = $('#sgPass').value, name = $('#sgName').value.trim();
+    $('#sgBtn').disabled = true; $('#sgErr').textContent = '';
+    try {
+      const remote = await apiPost('login', { username: name, password: pw });
+      S.password = pw; S.editor = name; ss('pas_pw', pw); ss('pas_ed', name);
+      // first admin sign-in on an empty sheet: store the Annex A event list
+      S.state = remote || await apiPost('replaceAll', { state: clone(DEFAULT_STATE) });
+      setAdmin(true); $('#modalHost').innerHTML = ''; render(); toast('Signed in');
+    } catch (e) { $('#sgErr').textContent = /Invalid/.test(e.message) ? 'Incorrect username or password.' : 'Cannot reach server.'; $('#sgBtn').disabled = false; }
+  });
+}
+
+function rankOptions(max, cur, extra) {
+  let o = `<option value="">—</option>`;
+  for (let i = 1; i <= max; i++) o += `<option value="${i}" ${String(cur) === String(i) ? 'selected' : ''}>${ORD(i)}</option>`;
+  return o + (extra || '');
+}
+
+let RW = null; // working copy of the event being edited in the results dialog
+
+function openResults(id) {
+  RW = clone(S.state.events.find(x => x.id === id));
+  RW.res = RW.res || {};
+  renderResults();
+}
+
+function renderResults(focusSub) {
+  const e = RW, teams = teamsOf(e.dept), R = e.res, multi = e.type === 'multi';
+  const statusSel = `<div class="field" style="margin-top:12px"><label>Event status</label>
+      <select class="input" id="resStatus">${['upcoming', 'ongoing', 'final'].map(s => `<option value="${s}" ${e.status === s ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}${s === 'final' ? ' (counts in overall)' : ''}</option>`).join('')}</select></div>`;
+  const head = `<h3 class="gold-text">${esc(evTitle(e))}</h3>
+    <div class="muted" style="font-size:14px">${esc(deptName(e.dept))} · Category ${e.category} · ${multi ? 'Multi-representative' : 'Single-representative'}</div>`;
+  const foot = `<div class="warn" id="resWarn"></div>
+    <div class="row" style="margin-top:10px"><button class="btn ghost" data-close>Cancel</button><span class="spacer"></span><button class="btn primary" id="resSave">Save results</button></div>`;
+  let body;
+  if (!multi) {
+    body = `<table class="res-table"><thead><tr><th>Team</th><th>Official rank</th><th>Status</th><th>Pts</th></tr></thead><tbody>
+      ${teams.map(t => { const r = R[t.id] || {}; return `<tr data-team="${t.id}">
+        <td><div class="tm"><img src="${t.logo}" alt=""><span>${esc(t.name)}</span></div></td>
+        <td><select class="input" data-rank>${rankOptions(teams.length, r.rank)}</select></td>
+        <td><select class="input" data-flag><option value="">OK</option><option value="def" ${r.flag === 'def' ? 'selected' : ''}>Default</option><option value="dq" ${r.flag === 'dq' ? 'selected' : ''}>DQ</option></select></td>
+        <td class="calc" data-calc>—</td></tr>`; }).join('')}
+      </tbody></table>
+      <p class="note">Enter the official rank. Same rank on two teams = tie; they share the points of the ranks they occupy. Default/DQ = 0 points; a DQ rank stays vacant.</p>`;
+  } else {
+    const maxRank = 10;
+    const cellOpt = v => rankOptions(maxRank, v, `<option value="D" ${v === 'D' ? 'selected' : ''}>Default</option><option value="Q" ${v === 'Q' ? 'selected' : ''}>DQ</option>`);
+    const word = e.pool === 'event' ? 'entrant' : 'sub-event';
+    body = `
+      <p class="note" style="margin:8px 0">${e.pool === 'event'
+        ? 'All entrants are ranked in one list (e.g. Chess players, candidates). Enter each entrant’s official rank.'
+        : 'Each sub-event is ranked on its own (e.g. Singles, Doubles, each swimming event). Enter each team’s rank per sub-event.'}</p>
+      <div class="subs">${e.subs.map((sb, i) => `
+        <div class="sub-block" data-sb="${sb.id}">
+          <div class="sub-h"><span class="sub-n">${i + 1}</span><input class="input" data-sublabel="${sb.id}" value="${esc(sb.label)}" aria-label="${word} name">
+            <button class="btn sm danger" data-subdel="${sb.id}" title="Remove ${word}">✕</button></div>
+          ${teams.map(t => { const v = ((R[t.id] || {}).p || {})[sb.id] ?? ''; return `
+            <div class="sub-r"><img src="${t.logo}" alt=""><span>${esc(t.name)}</span><select class="input" data-cell="${t.id}|${sb.id}">${cellOpt(String(v))}</select><span class="calc" data-pp="${t.id}|${sb.id}"></span></div>`; }).join('')}
+        </div>`).join('') || `<div class="empty" style="padding:14px">No ${word}s yet.</div>`}
+      </div>
+      <button class="btn sm" id="resAddSub" style="margin-top:8px">+ Add ${word}</button>
+      <h3 style="font-size:13px;margin:16px 0 6px" class="silver-text">TEAM TOTALS → EVENT RANK</h3>
+      <table class="res-table"><thead><tr><th>Team</th><th>Placement total</th><th>Event rank</th><th>Team status</th><th>Pts</th></tr></thead><tbody>
+      ${teams.map(t => { const r = R[t.id] || {}; return `<tr data-team="${t.id}">
+        <td><div class="tm"><img src="${t.logo}" alt=""><span>${esc(t.name)}</span></div></td>
+        <td class="calc" data-tot>—</td><td class="calc" data-rk>—</td>
+        <td><select class="input" data-flag><option value="">OK</option><option value="dq" ${r.flag === 'dq' ? 'selected' : ''}>DQ</option></select></td>
+        <td class="calc" data-calc>—</td></tr>`; }).join('')}
+      </tbody></table>
+      <p class="note">Steps 1–3 (Art. IV): placement points per ${word} → added per team → teams re-ranked by total → points by new rank. Ties share points. Default/DQ in a ${word} = 0 for that ${word} only; team DQ = 0 for the event, rank vacant.</p>`;
+  }
+  modal(head + body + statusSel + foot);
+  $$('#modalHost select, #modalHost input[data-sublabel]').forEach(el => el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', updResults));
+  updResults();
+  if (focusSub) { const i = $(`[data-sublabel="${focusSub}"]`); if (i) { i.focus(); i.select(); } }
+}
+
+function syncResults() {
+  const e = RW;
+  const res = {};
+  if (e.type === 'multi') {
+    $$('[data-sublabel]').forEach(i => { const sb = e.subs.find(x => x.id === i.dataset.sublabel); if (sb) sb.label = i.value.trim() || sb.label; });
+    $$('[data-cell]').forEach(sel => {
+      const [tid, sid] = sel.dataset.cell.split('|');
+      if (!sel.value) return;
+      res[tid] = res[tid] || { p: {}, flag: '' };
+      res[tid].p[sid] = (sel.value === 'D' || sel.value === 'Q') ? sel.value : Number(sel.value);
+    });
+    $$('.res-table tr[data-team]').forEach(tr => { const f = tr.querySelector('[data-flag]').value; if (f) { res[tr.dataset.team] = res[tr.dataset.team] || { p: {}, flag: '' }; res[tr.dataset.team].flag = f; } });
+  } else {
+    $$('.res-table tr[data-team]').forEach(tr => {
+      const rank = Number(tr.querySelector('[data-rank]').value) || null, flag = tr.querySelector('[data-flag]').value;
+      if (rank || flag) res[tr.dataset.team] = { rank, flag };
+    });
+  }
+  e.res = res;
+  if ($('#resStatus')) e.status = $('#resStatus').value;
+}
+
+function updResults() {
+  syncResults();
+  const rows = computeEvent(RW);
+  const warn = [];
+  rows.forEach(x => {
+    const tr = $(`.res-table tr[data-team="${x.team.id}"]`); if (!tr) return;
+    tr.querySelector('[data-calc]').textContent = (x.rank || x.flag) ? (x.flag === 'dq' ? 'DQ' : f2(x.points)) : '—';
+    if (RW.type === 'multi') {
+      tr.querySelector('[data-tot]').textContent = x.total ? f2(x.total) : '—';
+      tr.querySelector('[data-rk]').textContent = x.rank ? (x.tied ? 'T-' : '') + ORD(x.rank) : '—';
+      x.detail.forEach(d => { const c = $(`[data-pp="${x.team.id}|${d.id}"]`); if (c) c.textContent = d.pts ? f2(d.pts) : ''; });
+    }
+  });
+  if (RW.type === 'multi') {
+    if (rows.some(x => x.detail.some(d => d.tied))) warn.push('Tied placement in a ' + (RW.pool === 'event' ? 'ranking' : 'sub-event') + ' — points shared.');
+    if (rows.some(x => x.tied)) warn.push('Tied team totals — event points shared.');
+  } else if (rows.some(x => x.tied)) warn.push('Tie in official ranks — points shared.');
+  $('#resWarn').textContent = warn.join(' ');
+}
+
+function openEventForm(id) {
+  const e = id ? S.state.events.find(x => x.id === id) : { id: '', dept: S.dept, name: '', division: '', category: 'B', type: 'single', subs: [], status: 'upcoming', res: {} };
+  modal(`
+    <h3 class="gold-text" style="margin-bottom:12px">${id ? 'EDIT EVENT' : 'ADD EVENT'}</h3>
+    <div class="field"><label>Event name</label><input class="input" id="fName" value="${esc(e.name)}" placeholder="e.g. Basketball"></div>
+    <div class="form-grid">
+      <div class="field"><label>Department</label><select class="input" id="fDept">${S.state.depts.map(d => `<option value="${d.id}" ${e.dept === d.id ? 'selected' : ''}>${esc(d.name)}</option>`).join('')}</select></div>
+      <div class="field"><label>Division</label><select class="input" id="fDiv">${[['', 'None / Open'], ['Men', "Men's"], ['Women', "Women's"], ['Mixed', 'Mixed']].map(([v, l]) => `<option value="${v}" ${e.division === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+      <div class="field"><label>Category</label><select class="input" id="fCat">${['A', 'B', 'C'].map(c => `<option ${e.category === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+      <div class="field"><label>Type</label><select class="input" id="fType"><option value="single" ${e.type === 'single' ? 'selected' : ''}>Single-representative</option><option value="multi" ${e.type === 'multi' ? 'selected' : ''}>Multi-representative</option></select></div>
+    </div>
+    <div id="fSubsWrap">
+      <div class="field"><label>Ranking</label><select class="input" id="fPool">
+        <option value="sub" ${e.pool !== 'event' ? 'selected' : ''}>Each sub-event ranked separately (Badminton, Table Tennis, Swimming)</option>
+        <option value="event" ${e.pool === 'event' ? 'selected' : ''}>All entrants ranked in one list (Chess, Little Mr./Ms.)</option></select></div>
+      ${id ? '<p class="note">Sub-events / entrants are added, renamed or removed in the Results dialog.</p>'
+           : '<div class="field"><label>Initial sub-events / entrants (comma-separated)</label><input class="input" id="fSubs" placeholder="e.g. Singles, Doubles"></div>'}
+    </div>
+    ${id && hasResults(e) ? '<div class="warn">This event has results. Changing department, type or sub-events may clear them.</div>' : ''}
+    <div class="row" style="margin-top:10px">${id ? `<button class="btn danger" id="fDel" data-id="${e.id}">Delete</button>` : ''}<span class="spacer"></span>
+      <button class="btn ghost" data-close>Cancel</button><button class="btn primary" id="fSave" data-id="${e.id}">Save</button></div>`);
+  const tog = () => $('#fSubsWrap').classList.toggle('hidden', $('#fType').value !== 'multi');
+  $('#fType').addEventListener('change', tog); tog();
+}
+
+/* ---------- Save ---------- */
+function mirrorRows(st) {
+  // Readable rows for the Google Sheet (Standings + Results tabs)
+  const prev = S.state; S.state = st;
+  const standings = [['Department', 'Rank', 'Team', 'Unit', 'Points']];
+  st.depts.forEach(d => overall(d.id).forEach(r => standings.push([d.name, r.rank, r.team.name, r.team.unit, r.pts])));
+  const results = [['Department', 'Event', 'Category', 'Type', 'Status', 'Team', 'Rank', 'Flag', 'Detail', 'Points']];
+  st.events.forEach(e => computeEvent(e).forEach(x => results.push([deptName(e.dept), evTitle(e), e.category, e.type, e.status, x.team.name, x.rank || '', x.flag || '',
+    e.type === 'multi' ? x.detail.map(dd => dd.label + ': ' + cellTxt(dd) + (dd.pts ? ' (' + f2(dd.pts) + ')' : '')).join(' | ') : '', Math.round(x.points * 100) / 100])));
+  S.state = prev;
+  return { standings, results };
+}
+
+async function save(action, payload, msg) {
+  const btns = $$('.modal button, #btnSaveSet'); btns.forEach(b => b.disabled = true);
+  try {
+    if (!DEMO) {
+      const preview = applyLocal(clone(S.state), action, clone(payload));
+      payload._mirror = mirrorRows(preview);
+    }
+    S.state = await apiPost(action, payload);
+    $('#modalHost').innerHTML = ''; render(false); updateSync(); toast(msg || 'Saved');
+  } catch (err) { toast(err.message || 'Save failed'); btns.forEach(b => b.disabled = false); }
+}
+
+/* ---------- Events ---------- */
+document.addEventListener('click', ev => {
+  const el = ev.target.closest('button,[data-close]'); if (!el) return;
+  const d = el.dataset;
+  if (el.id === 'secLogo') { if (!S.admin) openSignIn(); else { S.tab = 'overall'; render(); } return; }
+  if (d.tab) { S.tab = d.tab; render(); scrollTo(0, 0); }
+  else if (d.dept) { S.dept = d.dept; render(); }
+  else if (d.cat) { S.cat = d.cat; render(); }
+  else if (d.evf) { S.evFilter = d.evf; render(); }
+  else if (d.res) openResults(d.res);
+  else if (d.edit) openEventForm(d.edit);
+  else if (d.close !== undefined) closeModal();
+  else if (el.id === 'btnAdd') openEventForm();
+  else if (el.id === 'btnLogout') { setAdmin(false); ss('pas_pw', null); ss('pas_ed', null); S.password = ''; if (S.tab === 'manage' || S.tab === 'settings') S.tab = 'overall'; render(); toast('Signed out'); }
+  else if (el.id === 'resSave') {
+    syncResults();
+    // drop cells that point to removed sub-events
+    const ids = new Set(RW.subs.map(x => x.id));
+    Object.values(RW.res).forEach(r => { if (r.p) Object.keys(r.p).forEach(k => { if (!ids.has(k)) delete r.p[k]; }); });
+    save('saveEvent', { event: RW }, 'Results saved');
+  }
+  else if (el.id === 'resAddSub') {
+    syncResults();
+    const nid = 's' + Date.now().toString(36);
+    RW.subs.push({ id: nid, label: RW.pool === 'event' ? 'Entrant ' + (RW.subs.length + 1) : 'New sub-event' });
+    renderResults(nid);
+  }
+  else if (d.subdel) {
+    syncResults();
+    const sb = RW.subs.find(x => x.id === d.subdel);
+    const used = Object.values(RW.res).some(r => r.p && r.p[d.subdel]);
+    if (used && !confirm('Remove "' + sb.label + '" and its placements?')) return;
+    RW.subs = RW.subs.filter(x => x.id !== d.subdel);
+    Object.values(RW.res).forEach(r => { if (r.p) delete r.p[d.subdel]; });
+    renderResults();
+  }
+  else if (el.id === 'fSave') {
+    const name = $('#fName').value.trim(); if (!name) { toast('Enter event name'); return; }
+    const old = d.id ? S.state.events.find(x => x.id === d.id) : null;
+    const e = old ? clone(old) : { id: 'ev-' + Date.now().toString(36), status: 'upcoming', res: {} };
+    const nd = { name, dept: $('#fDept').value, division: $('#fDiv').value, category: $('#fCat').value, type: $('#fType').value, pool: $('#fPool').value };
+    if (old) nd.subs = nd.type === 'multi' ? (old.subs || []) : [];
+    else nd.subs = nd.type === 'multi' ? ($('#fSubs').value.split(',').map(s => s.trim()).filter(Boolean)).map((l, i) => ({ id: 's' + (i + 1), label: l })) : [];
+    if (old && (old.dept !== nd.dept || old.type !== nd.type)) e.res = {};
+    Object.assign(e, nd);
+    save('saveEvent', { event: e }, old ? 'Event updated' : 'Event added');
+  }
+  else if (el.id === 'fDel') { if (confirm('Delete this event and its results?')) save('deleteEvent', { id: d.id }, 'Event deleted'); }
+  else if (el.id === 'btnSaveSet') {
+    const st = S.state, points = { A: [], B: [], C: [] };
+    $$('[data-pt]').forEach(i => { const [c, k] = i.dataset.pt.split(':'); points[c][+k] = Number(i.value) || 0; });
+    const teams = st.teams.map(t => ({ ...t, name: $(`[data-tn="${t.id}"]`).value.trim() || t.name, unit: $(`[data-tu="${t.id}"]`).value.trim(), dept: $(`[data-td="${t.id}"]`).value }));
+    save('saveSettings', { teams, points, announcement: $('#setAnn').value.trim() }, 'Settings saved');
+  }
+  else if (el.id === 'btnExport') {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(S.state, null, 2)], { type: 'application/json' }));
+    a.download = 'paseclaban2026_backup_' + new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.json'; a.click();
+  }
+  else if (el.id === 'btnReset') { if (confirm('Reset demo data to defaults?')) save('replaceAll', { state: clone(DEFAULT_STATE) }, 'Demo reset'); }
+});
+document.addEventListener('change', async ev => {
+  if (ev.target.id !== 'fileImport') return;
+  const f = ev.target.files[0]; if (!f) return;
+  try { const st = JSON.parse(await f.text()); if (!st.teams || !st.events) throw 0;
+    if (confirm('Replace ALL current data with this backup?')) save('replaceAll', { state: st }, 'Backup imported');
+  } catch (e) { toast('Invalid backup file'); }
+});
+
+function setAdmin(on) {
+  S.admin = on;
+  $('#modeBadge').classList.toggle('hidden', !on);
+  $('#btnLogout').classList.toggle('hidden', !on);
+  $('#secLogo').title = on ? 'Surigao Education Center' : 'Surigao Education Center';
+}
+function updateSync(err) {
+  const el = $('#syncInfo'); if (!S.state) return;
+  const u = S.state.updatedAt ? new Date(S.state.updatedAt) : null;
+  el.textContent = err ? 'Offline — showing last loaded data'
+    : u ? 'Updated ' + u.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) + (S.admin && S.state.updatedBy ? ' by ' + S.state.updatedBy : '')
+    : 'Official Tabulation · No results yet';
+}
+let toastT;
+function toast(m) { $$('.toast').forEach(t => t.remove()); const t = document.createElement('div'); t.className = 'toast'; t.textContent = m; document.body.appendChild(t); clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 2600); }
+
+/* ---------- Boot: view mode by default ---------- */
+$('#demoBadge').classList.toggle('hidden', !DEMO);
+if (ss('pas_pw')) { S.password = ss('pas_pw'); S.editor = ss('pas_ed') || 'Admin'; setAdmin(true); }
+refresh();
+S.poll = setInterval(() => refresh(true), CONFIG.POLL_MS);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(true); });
+</script>
+</body>
+</html>
