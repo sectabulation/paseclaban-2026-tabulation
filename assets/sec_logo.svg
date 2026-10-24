@@ -1,13 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
 <defs>
-<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3c2"/><stop offset=".18" stop-color="#e9c55c"/><stop offset=".4" stop-color="#a77f1f"/><stop offset=".55" stop-color="#f8e293"/><stop offset=".72" stop-color="#c99c30"/><stop offset="1" stop-color="#7a5913"/></linearGradient>
-<radialGradient id="sp" cx="38%" cy="32%" r="70%"><stop offset="0" stop-color="#ff6b72"/><stop offset=".4" stop-color="#c4121f"/><stop offset="1" stop-color="#5a060c"/></radialGradient>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f5f7"/><stop offset=".5" stop-color="#cfd3d8"/><stop offset="1" stop-color="#a3a8af"/></linearGradient>
 <linearGradient id="pl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3c40"/><stop offset="1" stop-color="#0b0b0c"/></linearGradient>
 <linearGradient id="pr" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e3034"/><stop offset="1" stop-color="#050505"/></linearGradient>
 <linearGradient id="fr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9aa0a7"/><stop offset=".5" stop-color="#5d6269"/><stop offset="1" stop-color="#2f3237"/></linearGradient>
+<linearGradient id="sheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<clipPath id="clip"><rect x="8" y="8" width="224" height="224" rx="10"/></clipPath>
 </defs>
 <rect x="8" y="8" width="224" height="224" rx="10" fill="url(#bg)" stroke="url(#fr)" stroke-width="7"/>
-<circle cx="120" cy="82" r="43" fill="url(#sp)"/>
+<circle cx="120" cy="82" r="43" fill="#c4121f"/>
 <polygon points="52,102 114,134 114,190 52,158" fill="url(#pl)"/>
 <polygon points="188,102 126,134 126,190 188,158" fill="url(#pr)"/>
+<g clip-path="url(#clip)"><rect x="-200" y="-80" width="80" height="400" fill="url(#sheen)" transform="rotate(20 120 120)"><animate attributeName="x" values="-200;-200;320" keyTimes="0;0.55;1" dur="5s" repeatCount="indefinite"/></rect></g>
 </svg>
