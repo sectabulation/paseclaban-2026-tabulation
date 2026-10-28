@@ -579,8 +579,9 @@ const showPoints = () => S.admin || Date.now() >= REVEAL_POINTS_AT.getTime();
 function vOverall() {
   const rows = overall(S.dept);
   const sp = showPoints();
-  const max = Math.max(1, ...rows.map(r => r.pts));
   const evs = S.state.events.filter(e => e.dept === S.dept);
+  // Bar base = maximum attainable points: 1st-place points of every event in this department
+  const max = Math.max(1, evs.reduce((a, e) => a + (table(e.category)[0] || 0), 0));
   const fin = evs.filter(e => e.status === 'final').length;
   return `
   <div class="hero">
@@ -598,7 +599,7 @@ function vOverall() {
       ${sp ? `<td class="t-pts"><span class="gold-text" data-count="${r.pts}">${f2(r.pts)}</span></td>` : ''}</tr>`).join('')}
     </tbody></table>
   </div>
-  <p class="note">Overall points = sum of points from all events marked <b>Final</b>. Each department is tabulated separately.${sp ? '' : ' Bars show each team\'s standing relative to the leader; point totals are revealed on the last day.'}</p>`;
+  <p class="note">Overall points = sum of points from all events marked <b>Final</b>. Each department is tabulated separately.${sp ? '' : ' Bars show each team\'s progress toward the maximum attainable points; point totals are revealed on the last day.'}</p>`;
 }
 
 function placeRow(e, x) {
