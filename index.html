@@ -684,7 +684,7 @@ function vBreakdown() {
 function vManage() {
   const evs = S.state.events.filter(e => e.dept === S.dept);
   return `
-  <div class="sec-title"><h2 class="silver-text">MANAGE EVENTS</h2><span class="spacer"></span><button class="btn sm primary" id="btnAdd">+ Add event</button></div>
+  <div class="sec-title"><h2 class="silver-text">MANAGE EVENTS</h2><span class="spacer"></span><button class="btn sm gold" data-xlsx>Export to Excel</button><button class="btn sm primary" id="btnAdd">+ Add event</button></div>
   <div class="row" style="margin-bottom:12px">${deptSeg()}</div>
   <div class="ed-list">${evs.map(e => `
     <div class="ed-item"><div class="nm"><b>${esc(evTitle(e))}</b><span>Category ${e.category} · ${e.type === 'multi' ? 'Multi · ' + e.subs.length + ' ' + (e.pool === 'event' ? 'entrants' : 'sub-events') : 'Single'}</span></div>
@@ -716,6 +716,7 @@ function vSettings() {
     <div class="field"><label>Announcement banner (blank = hidden)</label><textarea class="input" id="setAnn" rows="2">${esc(st.announcement || '')}</textarea></div>
   </div>
   <div class="row"><button class="btn primary" id="btnSaveSet">Save settings</button><span class="spacer"></span>
+    <button class="btn sm gold" data-xlsx>Export to Excel</button>
     <button class="btn sm" id="btnExport">Export backup</button>
     <label class="btn sm" style="cursor:pointer">Import backup<input type="file" accept=".json" id="fileImport" hidden></label>
     ${DEMO ? '<button class="btn sm danger" id="btnReset">Reset demo</button>' : ''}</div>`;
@@ -895,6 +896,52 @@ function mirrorRows(st) {
   return { standings, results };
 }
 
+/* ---------- Excel export (admin) ---------- */
+const XLSX_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+function loadXLSX() {
+  if (window.XLSX) return Promise.resolve(window.XLSX);
+  return new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = XLSX_SRC; sc.onload = () => ok(window.XLSX); sc.onerror = () => no(new Error('load')); document.head.appendChild(sc); });
+}
+async function exportExcel() {
+  let X; try { X = await loadXLSX(); } catch (_) { toast('Excel export needs an internet connection'); return; }
+  const st = S.state, wb = X.utils.book_new();
+  const r2 = n => Math.round(n * 100) / 100;
+  const put = (name, aoa, cols) => { const ws = X.utils.aoa_to_sheet(aoa); ws['!cols'] = cols.map(w => ({ wch: w })); X.utils.book_append_sheet(wb, ws, name.slice(0, 31)); };
+  const now = new Date();
+  const stamp = now.toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  // Sheet 1: Overall standings per department
+  const ov = [['PaSEClaban 2026 – Overall Standings'], ['Exported ' + stamp + '. Points count events marked Final only.'], []];
+  st.depts.forEach(d => {
+    const evs = st.events.filter(e => e.dept === d.id), fin = evs.filter(e => e.status === 'final').length;
+    ov.push([d.name + ' (' + fin + ' of ' + evs.length + ' events final)'], ['Rank', 'Team', 'Unit', 'Points']);
+    overall(d.id).forEach(r => ov.push([r.rank, r.team.name, r.team.unit || '', r2(r.pts)]));
+    ov.push([]);
+  });
+  put('Overall Standings', ov, [8, 26, 14, 10]);
+  // Sheet per department: points breakdown (events x teams), Final events only
+  st.depts.forEach(d => {
+    const teams = teamsOf(d.id), evs = st.events.filter(e => e.dept === d.id);
+    const tot = Object.fromEntries(teams.map(t => [t.id, 0]));
+    const aoa = [['Points Breakdown – ' + d.name], ['Blank = event not yet final.'], [],
+      ['Event', 'Category', 'Status', ...teams.map(t => t.name)]];
+    evs.forEach(e => {
+      const fin = e.status === 'final', m = fin ? Object.fromEntries(computeEvent(e).map(x => [x.team.id, x])) : {};
+      aoa.push([evTitle(e), e.category, e.status.toUpperCase(), ...teams.map(t => {
+        if (!fin) return '';
+        const x = m[t.id]; tot[t.id] += x.points;
+        return x.flag === 'dq' ? 'DQ' : x.flag === 'def' ? 'Default' : r2(x.points);
+      })]);
+    });
+    aoa.push(['OVERALL', '', '', ...teams.map(t => r2(tot[t.id]))]);
+    put('Breakdown ' + (d.name.length > 21 ? d.id.toUpperCase() : d.name), aoa, [40, 9, 10, ...teams.map(() => 16)]);
+  });
+  // Sheet: every event result row (same as the Google Sheet "Results" tab)
+  const res = mirrorRows(st).results;
+  put('All Results', res, [16, 40, 9, 8, 10, 22, 6, 6, 60, 8]);
+  X.writeFile(wb, 'PaSEClaban2026_Results_' + now.toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.xlsx');
+  toast('Excel file downloaded');
+}
+
 async function save(action, payload, msg) {
   const btns = $$('.modal button, #btnSaveSet'); btns.forEach(b => b.disabled = true);
   try {
@@ -961,6 +1008,7 @@ document.addEventListener('click', ev => {
     const teams = st.teams.map(t => ({ ...t, name: $(`[data-tn="${t.id}"]`).value.trim() || t.name, unit: $(`[data-tu="${t.id}"]`).value.trim(), dept: $(`[data-td="${t.id}"]`).value }));
     save('saveSettings', { teams, points, announcement: $('#setAnn').value.trim() }, 'Settings saved');
   }
+  else if (el.matches('[data-xlsx]')) exportExcel();
   else if (el.id === 'btnExport') {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([JSON.stringify(S.state, null, 2)], { type: 'application/json' }));
