@@ -896,49 +896,119 @@ function mirrorRows(st) {
   return { standings, results };
 }
 
-/* ---------- Excel export (admin) ---------- */
-const XLSX_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+/* ---------- Excel export (admin) — print-ready workbook ---------- */
+const XLSX_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
 function loadXLSX() {
-  if (window.XLSX) return Promise.resolve(window.XLSX);
-  return new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = XLSX_SRC; sc.onload = () => ok(window.XLSX); sc.onerror = () => no(new Error('load')); document.head.appendChild(sc); });
+  if (window.ExcelJS) return Promise.resolve(window.ExcelJS);
+  return new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = XLSX_SRC; sc.onload = () => ok(window.ExcelJS); sc.onerror = () => no(new Error('load')); document.head.appendChild(sc); });
 }
 async function exportExcel() {
-  let X; try { X = await loadXLSX(); } catch (_) { toast('Excel export needs an internet connection'); return; }
-  const st = S.state, wb = X.utils.book_new();
+  let EJ; try { EJ = await loadXLSX(); } catch (_) { toast('Excel export needs an internet connection'); return; }
+  const st = S.state, wb = new EJ.Workbook();
+  wb.creator = 'PaSEClaban 2026 Tabulation'; wb.created = new Date();
   const r2 = n => Math.round(n * 100) / 100;
-  const put = (name, aoa, cols) => { const ws = X.utils.aoa_to_sheet(aoa); ws['!cols'] = cols.map(w => ({ wch: w })); X.utils.book_append_sheet(wb, ws, name.slice(0, 31)); };
   const now = new Date();
-  const stamp = now.toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-  // Sheet 1: Overall standings per department
-  const ov = [['PaSEClaban 2026 – Overall Standings'], ['Exported ' + stamp + '. Points count events marked Final only.'], []];
+  const stamp = now.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  const MAROON = 'FF7A1018', LINE = { style: 'thin', color: { argb: 'FF9E9E9E' } };
+  const BOX = { top: LINE, left: LINE, bottom: LINE, right: LINE };
+  const HEAD_FILL = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF3E7C6' } };
+  const TOT_FILL = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE9E9E9' } };
+  const cap = s => s ? s[0].toUpperCase() + s.slice(1) : '';
+  // Letter paper, fit all columns on one page width (breakdowns: whole sheet on one page), repeat table header on every page
+  const sheet = (name, landscape, widths, onePage) => {
+    const ws = wb.addWorksheet(name.slice(0, 31), {
+      pageSetup: { paperSize: 1, orientation: landscape ? 'landscape' : 'portrait', fitToPage: true, fitToWidth: 1, fitToHeight: onePage ? 1 : 0,
+        horizontalCentered: true, margins: { left: 0.5, right: 0.5, top: 0.6, bottom: 0.6, header: 0.3, footer: 0.3 } },
+      headerFooter: { oddHeader: '&R&8As of ' + stamp, oddFooter: '&L&8PaSEClaban 2026 · Surigao Education Center&R&8Page &P of &N' },
+      views: [{ showGridLines: false }]
+    });
+    ws.columns = widths.map(w => ({ width: w }));
+    return ws;
+  };
+  const titleBlock = (ws, title, sub, span) => {
+    [['SURIGAO EDUCATION CENTER', 11, false], ['PaSEClaban 2026 — ' + title, 16, true], [sub, 10, false]].forEach(([t, sz, b], i) => {
+      const row = ws.addRow([t]); ws.mergeCells(row.number, 1, row.number, span);
+      const c = row.getCell(1); c.font = { size: sz, bold: b || i === 0, color: { argb: i === 1 ? MAROON : 'FF333333' } };
+      c.alignment = { horizontal: 'center', vertical: 'middle' }; row.height = i === 1 ? 24 : 16;
+    });
+    ws.addRow([]);
+  };
+  const headRow = (ws, vals) => {
+    const row = ws.addRow(vals); row.height = 30;
+    row.eachCell(c => { c.font = { bold: true, size: 10 }; c.fill = HEAD_FILL; c.border = BOX; c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }; });
+    return row;
+  };
+  const bodyRow = (ws, vals, opts = {}) => {
+    const row = ws.addRow(vals);
+    row.eachCell({ includeEmpty: true }, (c, i) => {
+      c.border = BOX; c.font = { size: 10, bold: !!opts.bold }; if (opts.fill) c.fill = opts.fill;
+      const left = (opts.left || []).includes(i);
+      c.alignment = { horizontal: left ? 'left' : 'center', vertical: 'middle', wrapText: true };
+      if (typeof c.value === 'number' && (opts.num || []).includes(i)) c.numFmt = '0.00';
+    });
+    return row;
+  };
+
+  // 1) Overall standings — one table per department (portrait)
+  const ov = sheet('Overall Standings', false, [9, 34, 18, 14]);
+  titleBlock(ov, 'Overall Standings', 'October 27–30, 2026 · As of ' + stamp, 4);
   st.depts.forEach(d => {
     const evs = st.events.filter(e => e.dept === d.id), fin = evs.filter(e => e.status === 'final').length;
-    ov.push([d.name + ' (' + fin + ' of ' + evs.length + ' events final)'], ['Rank', 'Team', 'Unit', 'Points']);
-    overall(d.id).forEach(r => ov.push([r.rank, r.team.name, r.team.unit || '', r2(r.pts)]));
-    ov.push([]);
+    const h = ov.addRow([d.name.toUpperCase() + '   (' + fin + ' of ' + evs.length + ' events final)']);
+    ov.mergeCells(h.number, 1, h.number, 4); h.getCell(1).font = { bold: true, size: 11, color: { argb: MAROON } }; h.height = 20;
+    headRow(ov, ['Rank', 'Team', 'Unit', 'Points']);
+    overall(d.id).forEach(r => bodyRow(ov, [ORD(r.rank), r.team.name, r.team.unit || '', r2(r.pts)], { left: [2, 3], num: [4], bold: r.rank === 1 && r.pts > 0 }));
+    ov.addRow([]);
   });
-  put('Overall Standings', ov, [8, 26, 14, 10]);
-  // Sheet per department: points breakdown (events x teams), Final events only
+  const n1 = ov.addRow(['Overall points are the sum of points from events marked Final. Each department is tabulated separately.']);
+  ov.mergeCells(n1.number, 1, n1.number, 4); n1.getCell(1).font = { italic: true, size: 9, color: { argb: 'FF666666' } }; n1.getCell(1).alignment = { wrapText: true }; n1.height = 26;
+
+  // 2) Points breakdown per department — events × teams (landscape)
   st.depts.forEach(d => {
     const teams = teamsOf(d.id), evs = st.events.filter(e => e.dept === d.id);
+    const ws = sheet('Breakdown ' + (d.name.length > 21 ? d.id.toUpperCase() : d.name), true, [38, 7, 11, ...teams.map(() => 14)], true);
+    const span = 3 + teams.length;
+    titleBlock(ws, 'Points Breakdown', d.name + ' · As of ' + stamp, span);
+    const hr = headRow(ws, ['Event', 'Cat.', 'Status', ...teams.map(t => t.name)]);
+    ws.pageSetup.printTitlesRow = hr.number + ':' + hr.number;
+    ws.views = [{ state: 'frozen', ySplit: hr.number, xSplit: 1, showGridLines: false }];
     const tot = Object.fromEntries(teams.map(t => [t.id, 0]));
-    const aoa = [['Points Breakdown – ' + d.name], ['Blank = event not yet final.'], [],
-      ['Event', 'Category', 'Status', ...teams.map(t => t.name)]];
     evs.forEach(e => {
       const fin = e.status === 'final', m = fin ? Object.fromEntries(computeEvent(e).map(x => [x.team.id, x])) : {};
-      aoa.push([evTitle(e), e.category, e.status.toUpperCase(), ...teams.map(t => {
-        if (!fin) return '';
+      const row = bodyRow(ws, [evTitle(e), e.category, cap(e.status), ...teams.map(t => {
+        if (!fin) return '—';
         const x = m[t.id]; tot[t.id] += x.points;
         return x.flag === 'dq' ? 'DQ' : x.flag === 'def' ? 'Default' : r2(x.points);
-      })]);
+      })], { left: [1], num: teams.map((_, i) => i + 4) });
+      if (!fin) row.eachCell(c => c.font = { size: 10, color: { argb: 'FF8A8A8A' } });
     });
-    aoa.push(['OVERALL', '', '', ...teams.map(t => r2(tot[t.id]))]);
-    put('Breakdown ' + (d.name.length > 21 ? d.id.toUpperCase() : d.name), aoa, [40, 9, 10, ...teams.map(() => 16)]);
+    const tr = bodyRow(ws, ['OVERALL TOTAL', '', '', ...teams.map(t => r2(tot[t.id]))], { bold: true, fill: TOT_FILL, left: [1], num: teams.map((_, i) => i + 4) });
+    tr.eachCell(c => c.border = { ...BOX, top: { style: 'medium', color: { argb: 'FF333333' } } });
+    const n = ws.addRow(['“—” = event not yet final. DQ = disqualified. Only events marked Final count toward the total.']);
+    ws.mergeCells(n.number, 1, n.number, span); n.getCell(1).font = { italic: true, size: 9, color: { argb: 'FF666666' } };
   });
-  // Sheet: every event result row (same as the Google Sheet "Results" tab)
-  const res = mirrorRows(st).results;
-  put('All Results', res, [16, 40, 9, 8, 10, 22, 6, 6, 60, 8]);
-  X.writeFile(wb, 'PaSEClaban2026_Results_' + now.toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.xlsx');
+
+  // 3) Detailed results — events that have results, one row per team (landscape)
+  const ws = sheet('Detailed Results', true, [20, 34, 7, 10, 22, 8, 10, 52, 10]);
+  titleBlock(ws, 'Detailed Results', 'Events with recorded results · As of ' + stamp, 9);
+  const hr = headRow(ws, ['Department', 'Event', 'Cat.', 'Status', 'Team', 'Rank', 'Remarks', 'Sub-event placements', 'Points']);
+  ws.pageSetup.printTitlesRow = hr.number + ':' + hr.number;
+  ws.views = [{ state: 'frozen', ySplit: hr.number, showGridLines: false }];
+  ws.autoFilter = { from: { row: hr.number, column: 1 }, to: { row: hr.number, column: 9 } };
+  let shade = false;
+  st.events.filter(hasResults).forEach(e => {
+    shade = !shade;
+    computeEvent(e).forEach(x => bodyRow(ws, [deptName(e.dept), evTitle(e), e.category, cap(e.status), x.team.name,
+      x.rank ? (x.tied ? 'T-' : '') + ORD(x.rank) : '—', x.flag === 'dq' ? 'DQ' : x.flag === 'def' ? 'Default' : '',
+      e.type === 'multi' ? x.detail.map(dd => dd.label + ': ' + cellTxt(dd) + (dd.pts ? ' (' + f2(dd.pts) + ')' : '')).join('\n') : '',
+      r2(x.points)], { left: [1, 2, 5, 8], num: [9], fill: shade ? { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF7F7F7' } } : null }));
+  });
+
+  const buf = await wb.xlsx.writeBuffer();
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+  a.download = 'PaSEClaban2026_Results_' + now.toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.xlsx'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   toast('Excel file downloaded');
 }
 
