@@ -651,8 +651,6 @@ function vOverall() {
     <div class="theme">“Unleash the Surge: Driven by Grit, Break the Limits, One Unstoppable Spirit”</div>
     <div class="date">OCTOBER 27–30, 2026</div>
   </div>
-  ${cg ? `<div class="congrats"><div class="cg-t gold-text">CONGRATULATIONS TO ALL TEAMS!</div>
-    <div class="cg-s">Thank you for the grit, heart, and sportsmanship you showed in PaSEClaban 2026. One Unstoppable Spirit.</div></div>` : ''}
   <div class="sec-title"><h2 class="silver-text">OVERALL STANDINGS</h2></div>
   <div class="row" style="margin-bottom:12px">${deptSeg()}<span class="spacer"></span><span class="muted" style="font-size:14px">${fin} of ${evs.length} events final</span></div>
   ${cg && rows.length ? `<div class="podx" style="--n:${rows.length}">${rows.map((r, i) => {
@@ -661,6 +659,8 @@ function vOverall() {
       <div class="lg"><img src="${r.team.logo}" alt=""></div>
       <div class="nm">${esc(r.team.name)}</div>${r.team.unit ? `<div class="un">${esc(r.team.unit)}</div>` : ''}
       <div class="step"><b>${sp ? f2(r.pts) : ''}</b></div></div>`; }).join('')}</div><div class="podx-base"></div>` : ''}
+  ${cg ? `<div class="congrats"><div class="cg-t gold-text">CONGRATULATIONS TO ALL TEAMS!</div>
+    <div class="cg-s">Thank you for the grit, heart, and sportsmanship you showed in PaSEClaban 2026. One Unstoppable Spirit.</div></div>` : ''}
   <div class="panel" style="padding:6px 10px">
     <table class="table${cg ? ' ug' + (sp ? ' pts' : '') : ''}"><thead><tr><th>TEAM</th>${sp ? '<th style="text-align:right">POINTS</th>' : ''}</tr></thead><tbody>
     ${rows.map(r => `<tr${cg ? ug(r) : ''}>
