@@ -163,6 +163,9 @@ main{max-width:1200px;margin:0 auto;padding:16px 16px 60px}
 .mx td:first-child,.mx th:first-child{text-align:left;position:sticky;left:0;background:#1d0508;z-index:1;white-space:normal;min-width:150px;max-width:210px}
 .mx tr.tot td{font-family:Orbitron;font-weight:900;color:var(--gold2);background:rgba(217,181,74,.08)}
 .mx td.z{color:rgba(255,255,255,.25)}
+.mx td.prov{color:#ffc865;font-style:italic}
+.mx tr.tot.prov td{color:#ffc865;background:rgba(255,200,101,.06);font-style:italic}
+.mx .stt{display:inline-block;font-size:9px;padding:1px 5px;border-radius:4px;margin-left:4px;border:1px solid rgba(255,200,101,.5);color:#ffc865;font-style:normal;vertical-align:1px}
 
 /* admin */
 .ed-list{display:flex;flex-direction:column;gap:6px}
@@ -660,15 +663,21 @@ function vEvents() {
 function vBreakdown() {
   const teams = teamsOf(S.dept);
   const evs = S.state.events.filter(e => e.dept === S.dept);
+  // Admins also see points from events that are not yet Final (provisional); viewers see Final only
+  const adm = S.admin;
   const tot = Object.fromEntries(teams.map(t => [t.id, 0]));
+  const prov = Object.fromEntries(teams.map(t => [t.id, 0]));
+  let anyProv = false;
   const body = evs.map(e => {
     const fin = e.status === 'final';
-    const pts = fin ? Object.fromEntries(computeEvent(e).map(x => [x.team.id, x])) : {};
-    return `<tr><td>${esc(evTitle(e))} <span class="cat ${e.category}" style="font-size:9px;padding:2px 5px">${e.category}</span></td>${teams.map(t => {
+    const show = fin || (adm && hasResults(e));
+    const pts = show ? Object.fromEntries(computeEvent(e).map(x => [x.team.id, x])) : {};
+    if (show && !fin) anyProv = true;
+    return `<tr><td>${esc(evTitle(e))} <span class="cat ${e.category}" style="font-size:9px;padding:2px 5px">${e.category}</span>${adm && !fin ? `<span class="stt">${e.status.toUpperCase()}</span>` : ''}</td>${teams.map(t => {
       const x = pts[t.id];
-      if (!fin) return `<td class="z">·</td>`;
-      tot[t.id] += x.points;
-      return `<td class="${x.points ? '' : 'z'}">${x.flag === 'dq' ? 'DQ' : x.flag === 'def' ? 'Def' : f2(x.points)}</td>`;
+      if (!show) return `<td class="z">·</td>`;
+      prov[t.id] += x.points; if (fin) tot[t.id] += x.points;
+      return `<td class="${x.points ? (fin ? '' : 'prov') : 'z'}">${x.flag === 'dq' ? 'DQ' : x.flag === 'def' ? 'Def' : f2(x.points)}</td>`;
     }).join('')}</tr>`;
   }).join('');
   return `
@@ -676,9 +685,12 @@ function vBreakdown() {
   <div class="row" style="margin-bottom:12px">${deptSeg()}</div>
   <div class="scroll-x"><table class="mx">
     <thead><tr><th>EVENT</th>${teams.map(t => `<th><img src="${t.logo}" alt="">${esc(t.unit || t.name)}</th>`).join('')}</tr></thead>
-    <tbody>${body}<tr class="tot"><td>OVERALL</td>${teams.map(t => `<td>${f2(tot[t.id])}</td>`).join('')}</tr></tbody>
+    <tbody>${body}<tr class="tot"><td>OVERALL${adm ? ' (FINAL)' : ''}</td>${teams.map(t => `<td>${f2(tot[t.id])}</td>`).join('')}</tr>
+    ${adm && anyProv ? `<tr class="tot prov"><td>PROVISIONAL (ALL ENTERED)</td>${teams.map(t => `<td>${f2(prov[t.id])}</td>`).join('')}</tr>` : ''}</tbody>
   </table></div>
-  <p class="note">Only events marked Final show points. “·” = not yet final.</p>`;
+  <p class="note">${adm
+    ? 'Admin view: points from events not yet Final are shown in <i style="color:#ffc865">italic gold</i> and are provisional. Only Final events count toward the official Overall. “·” = no results entered.'
+    : 'Only events marked Final show points. “·” = not yet final.'}</p>`;
 }
 
 function vManage() {
@@ -972,19 +984,27 @@ async function exportExcel() {
     const hr = headRow(ws, ['Event', 'Cat.', 'Status', ...teams.map(t => t.name)]);
     ws.pageSetup.printTitlesRow = hr.number + ':' + hr.number;
     ws.views = [{ state: 'frozen', ySplit: hr.number, xSplit: 1, showGridLines: false }];
-    const tot = Object.fromEntries(teams.map(t => [t.id, 0]));
+    const tot = Object.fromEntries(teams.map(t => [t.id, 0])), prov = Object.fromEntries(teams.map(t => [t.id, 0]));
+    let anyProv = false;
     evs.forEach(e => {
-      const fin = e.status === 'final', m = fin ? Object.fromEntries(computeEvent(e).map(x => [x.team.id, x])) : {};
+      const fin = e.status === 'final', show = fin || hasResults(e);
+      const m = show ? Object.fromEntries(computeEvent(e).map(x => [x.team.id, x])) : {};
+      if (show && !fin) anyProv = true;
       const row = bodyRow(ws, [evTitle(e), e.category, cap(e.status), ...teams.map(t => {
-        if (!fin) return '—';
-        const x = m[t.id]; tot[t.id] += x.points;
+        if (!show) return '—';
+        const x = m[t.id]; prov[t.id] += x.points; if (fin) tot[t.id] += x.points;
         return x.flag === 'dq' ? 'DQ' : x.flag === 'def' ? 'Default' : r2(x.points);
       })], { left: [1], num: teams.map((_, i) => i + 4) });
-      if (!fin) row.eachCell(c => c.font = { size: 10, color: { argb: 'FF8A8A8A' } });
+      if (!show) row.eachCell(c => c.font = { size: 10, color: { argb: 'FF8A8A8A' } });
+      else if (!fin) row.eachCell(c => c.font = { size: 10, italic: true, color: { argb: 'FF9A6A00' } });
     });
-    const tr = bodyRow(ws, ['OVERALL TOTAL', '', '', ...teams.map(t => r2(tot[t.id]))], { bold: true, fill: TOT_FILL, left: [1], num: teams.map((_, i) => i + 4) });
+    const tr = bodyRow(ws, ['OVERALL TOTAL (Final events)', '', '', ...teams.map(t => r2(tot[t.id]))], { bold: true, fill: TOT_FILL, left: [1], num: teams.map((_, i) => i + 4) });
     tr.eachCell(c => c.border = { ...BOX, top: { style: 'medium', color: { argb: 'FF333333' } } });
-    const n = ws.addRow(['“—” = event not yet final. DQ = disqualified. Only events marked Final count toward the total.']);
+    if (anyProv) {
+      const pr = bodyRow(ws, ['PROVISIONAL TOTAL (all entered results)', '', '', ...teams.map(t => r2(prov[t.id]))], { left: [1], num: teams.map((_, i) => i + 4) });
+      pr.eachCell(c => c.font = { size: 10, bold: true, italic: true, color: { argb: 'FF9A6A00' } });
+    }
+    const n = ws.addRow(['“—” = no results entered. Italic rows = results entered but event not yet Final (provisional). DQ = disqualified. Only Final events count toward the Overall total.']);
     ws.mergeCells(n.number, 1, n.number, span); n.getCell(1).font = { italic: true, size: 9, color: { argb: 'FF666666' } };
   });
 
