@@ -235,6 +235,60 @@ details.subd summary{cursor:pointer;color:var(--gold2);font-weight:700;font-size
   background-size:300% 100%,100% 100%;background-repeat:no-repeat;animation:secSheen 5s ease-in-out infinite}
 @keyframes secSheen{0%{background-position:130% 0,0 0}60%,100%{background-position:-30% 0,0 0}}
 @media (prefers-reduced-motion:reduce){.hero h2 .sec-silver{animation:none}}
+/* Closing: congratulations banner + underglow on standings (gold / silver / bronze shine for placers, white for the rest) */
+.congrats{position:relative;text-align:center;margin:6px auto 26px;padding:14px 10px 18px;max-width:760px}
+.congrats .cg-t{font-family:Orbitron;font-weight:900;font-size:clamp(20px,4.6vw,34px);letter-spacing:.06em;line-height:1.15}
+.congrats .cg-s{margin-top:8px;font-size:15px;color:var(--text);opacity:.85}
+.congrats::after{content:"";position:absolute;left:8%;right:8%;bottom:-6px;height:22px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(244,221,138,.55),rgba(217,181,74,.18) 45%,transparent 72%);filter:blur(6px);animation:cgGlow 3.2s ease-in-out infinite}
+@keyframes cgGlow{0%,100%{opacity:.65}50%{opacity:1}}
+.table.ug{border-spacing:0 16px;--pw:0px}
+.table.ug.pts{--pw:110px}
+.table.ug tr{--ug:255,255,255;--ga:.38}
+.table.ug tr.ug1{--ug:246,214,104;--ga:.95}
+.table.ug tr.ug2{--ug:226,230,238;--ga:.85}
+.table.ug tr.ug3{--ug:224,140,72;--ga:.9}
+.table.ug tbody td{border-bottom-color:rgba(var(--ug),.45)}
+.table.ug tbody td:first-child{position:relative}
+/* underglow: one soft light pool under the whole row (spans into the points cell) */
+.table.ug tbody td:first-child::after{content:"";position:absolute;left:3%;right:calc(3% - var(--pw));top:calc(100% - 3px);height:16px;border-radius:50%;
+  pointer-events:none;background:radial-gradient(ellipse at center,rgba(var(--ug),var(--ga)),rgba(var(--ug),calc(var(--ga) * .35)) 45%,transparent 72%);filter:blur(3px)}
+/* placers: pulsing glow + a light sweep across the row */
+.table.ug tr.ug1 td:first-child::after,.table.ug tr.ug2 td:first-child::after,.table.ug tr.ug3 td:first-child::after{animation:ugPulse 2.6s ease-in-out infinite}
+.table.ug tr.ug1 td:first-child::before,.table.ug tr.ug2 td:first-child::before,.table.ug tr.ug3 td:first-child::before{content:"";position:absolute;top:-1px;bottom:-1px;left:-1px;right:calc(-1px - var(--pw));
+  border-radius:10px;pointer-events:none;background:linear-gradient(105deg,transparent 40%,rgba(var(--ug),.16) 50%,transparent 60%);background-size:300% 100%;background-repeat:no-repeat;animation:ugSweep 4.5s ease-in-out infinite}
+.table.ug tr.ug2 td:first-child::after,.table.ug tr.ug2 td:first-child::before{animation-delay:.4s}
+.table.ug tr.ug3 td:first-child::after,.table.ug tr.ug3 td:first-child::before{animation-delay:.8s}
+@keyframes ugPulse{0%,100%{opacity:.55;transform:scaleX(.92)}50%{opacity:1;transform:scaleX(1)}}
+@keyframes ugSweep{0%,35%{background-position:120% 0}75%,100%{background-position:-20% 0}}
+@media (max-width:640px){.table.ug.pts{--pw:78px}}
+/* Podium: every team on a step (tallest = leader, center-out), overall score on the step; all shine with underglow */
+.podx{display:grid;grid-template-columns:repeat(var(--n),1fr);align-items:end;gap:12px;max-width:900px;margin:0 auto 28px;padding:0 4px}
+.podx .pc{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;--ug:255,255,255}
+.podx .lg{position:relative;width:min(var(--lw,104px),100%);aspect-ratio:1;margin-bottom:12px}
+.podx .lg img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;
+  filter:drop-shadow(0 0 2px rgba(var(--ug),.9)) drop-shadow(0 0 8px rgba(var(--ug),.55));animation:lgGlow 2.6s ease-in-out infinite;animation-delay:var(--d,0s)}
+/* glow traces the logo's own outline */
+@keyframes lgGlow{0%,100%{filter:drop-shadow(0 0 1px rgba(var(--ug),.75)) drop-shadow(0 0 6px rgba(var(--ug),.35))}
+  50%{filter:drop-shadow(0 0 3px rgba(var(--ug),1)) drop-shadow(0 0 14px rgba(var(--ug),.75)) drop-shadow(0 0 26px rgba(var(--ug),.35))}}
+.podx .nm{font-weight:800;font-size:16px;line-height:1.15;margin-top:6px;overflow-wrap:anywhere}
+.podx .un{font-size:12px;color:var(--muted)}
+.podx .step{position:relative;overflow:hidden;width:100%;height:var(--h);margin-top:10px;border-radius:10px 10px 0 0;display:flex;align-items:flex-start;justify-content:center;padding:12px 4px 0;
+  background:linear-gradient(180deg,rgba(var(--ug),.30),rgba(var(--ug),.08) 60%,rgba(0,0,0,.25));border:1px solid rgba(var(--ug),.55);border-bottom:0;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 -6px 24px -10px rgba(var(--ug),.8)}
+.podx .step::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.18) 50%,transparent 60%);
+  background-size:300% 100%;background-repeat:no-repeat;animation:ugSweep 4.5s ease-in-out infinite;animation-delay:var(--d,0s)}
+.podx .step::after{content:"";position:absolute;left:6%;right:6%;bottom:0;height:14px;pointer-events:none;border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(var(--ug),.7),transparent 70%);filter:blur(4px);animation:ugPulse 2.6s ease-in-out infinite;animation-delay:var(--d,0s)}
+.podx .step b{position:relative;font-family:Orbitron;font-weight:900;font-size:var(--fs,22px);line-height:1;color:transparent;-webkit-background-clip:text;background-clip:text;
+  background-image:linear-gradient(180deg,#ffffff,#e6e6e6 45%,#9a9a9a)}
+.podx .pc.g1{--ug:246,214,104}.podx .pc.g1 .step b{background-image:linear-gradient(180deg,#fff3c2,#e9c55c 45%,#a77f1f)}
+.podx .pc.g2{--ug:226,230,238}.podx .pc.g2 .step b{background-image:linear-gradient(180deg,#ffffff,#cfd3d8 45%,#7f8690)}
+.podx .pc.g3{--ug:224,140,72}.podx .pc.g3 .step b{background-image:linear-gradient(180deg,#ffd3a8,#d98a4a 45%,#8a4e22)}
+.podx-base{max-width:900px;margin:-28px auto 30px;height:6px;border-radius:0 0 8px 8px;background:linear-gradient(90deg,transparent,rgba(217,181,74,.5),transparent)}
+@media (max-width:640px){.podx{gap:6px}.podx .nm{font-size:12px}.podx .un{font-size:10px}.podx .step{padding-top:8px;height:calc(var(--h) * .75)}.podx .step b{font-size:calc(var(--fs,22px) * .62)}}
+@media (prefers-reduced-motion:reduce){.podx .lg img,.podx .step::before,.podx .step::after{animation:none!important}}
+@media (prefers-reduced-motion:reduce){.congrats::after,.table.ug tbody td::before,.table.ug tbody td::after{animation:none!important}}
 .pod.p1{animation:glow 4s ease-in-out infinite}
 #view.enter .pod.p1{animation:rise .5s cubic-bezier(.2,.7,.2,1) both,glow 4s ease-in-out .6s infinite;animation-delay:calc(var(--i,0) * 50ms),.6s}
 .bar i{transition:width 1s cubic-bezier(.2,.7,.2,1)}
@@ -586,6 +640,10 @@ function vOverall() {
   // Bar base = maximum attainable points: 1st-place points of every event in this department
   const max = Math.max(1, evs.reduce((a, e) => a + (table(e.category)[0] || 0), 0));
   const fin = evs.filter(e => e.status === 'final').length;
+  // Closing (last day onward): congratulations banner + underglow by placement
+  const cg = Date.now() >= REVEAL_POINTS_AT.getTime();
+  const ug = r => r.pts > 0 && r.rank <= 3 ? ' class="ug' + r.rank + '"' : '';
+  const arr = []; rows.forEach((_, i) => i % 2 ? arr.unshift(i) : arr.push(i));   // podium order e.g. 4,2,1,3,5
   return `
   <div class="hero">
     <div class="school">SURIGAO EDUCATION CENTER</div>
@@ -593,11 +651,19 @@ function vOverall() {
     <div class="theme">“Unleash the Surge: Driven by Grit, Break the Limits, One Unstoppable Spirit”</div>
     <div class="date">OCTOBER 27–30, 2026</div>
   </div>
+  ${cg ? `<div class="congrats"><div class="cg-t gold-text">CONGRATULATIONS TO ALL TEAMS!</div>
+    <div class="cg-s">Thank you for the grit, heart, and sportsmanship you showed in PaSEClaban 2026. One Unstoppable Spirit.</div></div>` : ''}
   <div class="sec-title"><h2 class="silver-text">OVERALL STANDINGS</h2></div>
   <div class="row" style="margin-bottom:12px">${deptSeg()}<span class="spacer"></span><span class="muted" style="font-size:14px">${fin} of ${evs.length} events final</span></div>
+  ${cg && rows.length ? `<div class="podx" style="--n:${rows.length}">${rows.map((r, i) => {
+      const k = Math.min(r.rank, 5) - 1, pos = arr.indexOf(i) + 1;   // tallest in the middle, then alternating out
+      return `<div class="pc g${r.pts > 0 && r.rank <= 3 ? r.rank : 0}" style="order:${pos};--h:${[150, 122, 98, 78, 62][k]}px;--lw:${[124, 108, 98, 90, 84][k]}px;--fs:${[26, 23, 21, 19, 18][k]}px;--d:${i * .3}s">
+      <div class="lg"><img src="${r.team.logo}" alt=""></div>
+      <div class="nm">${esc(r.team.name)}</div>${r.team.unit ? `<div class="un">${esc(r.team.unit)}</div>` : ''}
+      <div class="step"><b>${sp ? f2(r.pts) : ''}</b></div></div>`; }).join('')}</div><div class="podx-base"></div>` : ''}
   <div class="panel" style="padding:6px 10px">
-    <table class="table"><thead><tr><th>TEAM</th>${sp ? '<th style="text-align:right">POINTS</th>' : ''}</tr></thead><tbody>
-    ${rows.map(r => `<tr>
+    <table class="table${cg ? ' ug' + (sp ? ' pts' : '') : ''}"><thead><tr><th>TEAM</th>${sp ? '<th style="text-align:right">POINTS</th>' : ''}</tr></thead><tbody>
+    ${rows.map(r => `<tr${cg ? ug(r) : ''}>
       <td><div class="t-team"><img src="${r.team.logo}" alt=""><div style="flex:1;min-width:0">${esc(r.team.name)}${r.team.unit ? `<span class="un">${esc(r.team.unit)}</span>` : ''}<div class="bar"><i data-w="${r.pts / max * 100}" style="width:${r.pts / max * 100}%"></i></div></div></div></td>
       ${sp ? `<td class="t-pts"><span class="gold-text" data-count="${r.pts}">${f2(r.pts)}</span></td>` : ''}</tr>`).join('')}
     </tbody></table>
